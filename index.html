@@ -12,28 +12,51 @@
                 width: 500px;
             }
 
+            canvas{box-shadow: 0 0 3px #333;}
+
         </style>
     </head>
     <body>
-        <input type="text" id="input" placeholder = '打开控制台 并在文本框内输入 ： 00、01、02、10、11、12...'>
+        <canvas width="300" height="300"></canvas>
 
         <script type="text/javascript">
-            var doc = document; 
+
+            var doc = document;
+
+            var clickEvent =  'ontouchstart' in window ? 'touchend' : 'click';
+            var Canvas = doc.querySelector('canvas');
+
 
             var array,step,turn;
             function init(){
                 array = [[null,null,null],[null,null,null],[null,null,null]];
                 step = 0;
                 turn = 'human';
+                render();
             }
 
             init();
 
-            var _input = doc.querySelector('input');
 
-            _input.addEventListener('change',function(){
-                var _v1 = ~~this.value.slice(0,1);
-                var _v2 = ~~this.value.slice(1,2);
+            Canvas.addEventListener(clickEvent,function(e){
+                var x,y;
+                if (e.pageX || e.pageY) { 
+                  x = e.pageX;
+                  y = e.pageY;
+                }else { 
+                  x = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft; 
+                  y = e.clientY + document.body.scrollTop + document.documentElement.scrollTop; 
+                } 
+                x -= Canvas.offsetLeft;
+                y -= Canvas.offsetTop;
+
+                var w,h;
+                w = Canvas.width;
+                h = Canvas.height;
+
+                var _v1 = ~~(y/h*3);
+                var _v2 = ~~(x/w*3);
+
                 if(!array[_v1]){return false;}
                 if(array[_v1][_v2] !== null){return false;}
                 array[_v1][_v2] = 'you';
@@ -41,7 +64,7 @@
                 judgeWin();
                 comTurn();
                 step++;
-            });
+            },false);
 
             function comTurn(){
                 var _max = 0;
@@ -206,10 +229,34 @@
             }
 
             function render(){
-                console.clear();
-                console.log(array[0]);
-                console.log(array[1]);
-                console.log(array[2]);
+                var ctx = Canvas.getContext('2d');
+                var w = Canvas.width,h = Canvas.height;
+                ctx.clearRect(0,0,w,h);
+                ctx.beginPath();
+                ctx.moveTo(0,~~(w/3)+0.5);
+                ctx.lineTo(h,~~(w/3)+0.5);
+
+                ctx.moveTo(0,~~(w/3*2)+0.5);
+                ctx.lineTo(h,~~(w/3*2)+0.5);
+
+                ctx.moveTo(~~(h/3)+0.5,0);
+                ctx.lineTo(~~(h/3)+0.5,w);
+
+                ctx.moveTo(~~(h/3*2)+0.5,0);
+                ctx.lineTo(~~(h/3*2)+0.5,w);
+
+                ctx.stroke();
+                ctx.closePath();
+
+
+                for(var i=0;i<array.length;i++){
+                    for(var j=0;j<array[i].length;j++){
+                        if(array[i][j] !== null ){
+                            ctx.fillText(array[i][j],~~(w/3)*j + ~~(w/6),~~(h/3)*i + ~~(h/6) );
+                        }
+                    }
+                }
+
             }
 
             function next(){
