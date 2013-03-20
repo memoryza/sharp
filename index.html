@@ -44,7 +44,30 @@
             });
 
             function comTurn(){
-                var putsArray = findPuts();
+                var _max = 0;
+                var _putsArray = [];
+                var _puts = findPuts();
+
+                for(var i=0;i<_puts.length;i++){
+                    for(var j=0;j<_puts.length;j++){
+                        if(_puts[i][j] > _max ){
+                            _max = _puts[i][j];
+                            _putsArray = [];
+                        }
+                        if(_puts[i][j] == _max){
+                            _putsArray.push(i + ',' + j);
+                        }
+                    }
+                }
+
+                var num = Math.floor(Math.random()*_putsArray.length);
+
+                var _x = ~~_putsArray[num].split(',')[0],
+                _y = ~~_putsArray[num].split(',')[1];
+
+                array[_x][_y] = 'com';
+                render();
+                judgeWin();
                 step++;
             }
 
@@ -136,8 +159,6 @@
                             wight_array[i][j] += 1;
                         }
 
-
-
                         if(o1 !== undefined){
                             if(o1 == o2 && o1 !== null){
                                 if(o1=='com'){
@@ -181,12 +202,7 @@
 
                     }
                 }
-
-                console.log('=============');
-                console.log(wight_array[0]);
-                console.log(wight_array[1]);
-                console.log(wight_array[2]);
-
+                return wight_array;
             }
 
             function render(){
@@ -229,10 +245,12 @@
                     }
 
                     if(array[2][0] && array[2][0] == array[1][1] && array[1][1]  == array[0][2]){
-                        alert(array[0][0]+ ' win!');
+                        alert(array[2][0]+ ' win!');
                         init();
                         return;
                     }
+
+
 
                 }
             }
