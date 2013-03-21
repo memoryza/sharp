@@ -319,3 +319,21 @@ function judgeWin(){
     return finished;
 
 }
+
+
+
+
+
+//<----------------- cube class
+var Cube;
+;(function(exports){
+
+    exports.count = 0;
+    exports.top = null;      //the first cube in the square
+    exports.bottom = null;   //the last cube in the square
+
+
+
+
+})(Cube)
+//cube class------------------->
