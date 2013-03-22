@@ -1,8 +1,6 @@
 var doc = document;
 
 var clickEvent =  'ontouchstart' in window ? 'touchend' : 'click';
-var Canvas = doc.querySelector('canvas');
-
 
 var array,step,turn;
 function init(){
@@ -12,36 +10,36 @@ function init(){
     turn = 'human';
 }
 
-init();
+// init();
 
-Canvas.addEventListener(clickEvent,function(e){
-	if(turn !== 'human'){return false;}
-    var x,y;
-    e = e.changedTouches ? e.changedTouches[0] : e;
-    if (e.pageX || e.pageY) { 
-      x = e.pageX;
-      y = e.pageY;
-    }else { 
-      x = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft; 
-      y = e.clientY + document.body.scrollTop + document.documentElement.scrollTop; 
-    } 
-    x -= Canvas.offsetLeft;
-    y -= Canvas.offsetTop;
+// Canvas.addEventListener(clickEvent,function(e){
+// 	if(turn !== 'human'){return false;}
+//     var x,y;
+//     e = e.changedTouches ? e.changedTouches[0] : e;
+//     if (e.pageX || e.pageY) { 
+//       x = e.pageX;
+//       y = e.pageY;
+//     }else { 
+//       x = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft; 
+//       y = e.clientY + document.body.scrollTop + document.documentElement.scrollTop; 
+//     } 
+//     x -= Canvas.offsetLeft;
+//     y -= Canvas.offsetTop;
 
-    var w,h;
-    w = Canvas.width;
-    h = Canvas.height;
+//     var w,h;
+//     w = Canvas.width;
+//     h = Canvas.height;
 
-    var _v1 = ~~(y/h*3);
-    var _v2 = ~~(x/w*3);
+//     var _v1 = ~~(y/h*3);
+//     var _v2 = ~~(x/w*3);
 
-    if(!array[_v1]){return false;}
-    if(array[_v1][_v2] !== null){return false;}
-    array[_v1][_v2] = 'you';
+//     if(!array[_v1]){return false;}
+//     if(array[_v1][_v2] !== null){return false;}
+//     array[_v1][_v2] = 'you';
     
-    next();
+//     next();
 
-},false);
+// },false);
 
 function comTurn(){
 	if(turn !== 'computer'){return false;}
@@ -307,33 +305,32 @@ function judgeWin(){
     if((step >= 9 && !hasWiner) || hasWiner ){
     	if(!!winner){
             if(winner == 'you'){
-                alert('你赢了:)');
+                document.getElementById('info').innerHTML = '你赢了:)';
             }else{
-                alert('你输了:(');
+                document.getElementById('info').innerHTML = '你输了:(';
             }
     	}else{
-    		alert('平局!');
+            document.getElementById('info').innerHTML = '平局!';
     	}
     	finished = true;
     }
     return finished;
-
 }
 
+
+//
+doc.querySelector('.board').addEventListener('touchend',function(){});
 
 
 
 
 //<----------------- cube class
-var Cube;
-;(function(exports){
+// var Cube;
+// ;(function(exports){
 
-    exports.count = 0;
-    exports.top = null;      //the first cube in the square
-    exports.bottom = null;   //the last cube in the square
+//     exports.count = 0;
+//     exports.top = null;      //the first cube in the square
+//     exports.bottom = null;   //the last cube in the square
 
-
-
-
-})(Cube)
+// })(Cube)
 //cube class------------------->
