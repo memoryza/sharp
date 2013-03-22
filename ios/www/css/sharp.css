@@ -1,0 +1,66 @@
+body{
+	background: #f0f0f0;
+}
+
+
+/** <--------- cube chess class **/
+
+.board{
+	width: 300px;
+	height: 300px;
+	position: relative;
+}
+
+.board .chess{
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	width: 100px;
+	height: 100px;
+	-webkit-perspective: 1000px;
+	-webkit-transform-style: preserve-3d;
+	-webkit-perspective-origin: center center;
+	
+}
+.board .chess .trig{
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	width: 100%;
+	height: 100%;
+	-webkit-transform: translateZ(-28.8675px);
+	-webkit-transform-style: preserve-3d;
+	
+}
+.board .chess .rotate{
+	width: 100%;
+	height: 100%;
+	-webkit-transition:-webkit-transform 500ms;
+	-webkit-transform-style: preserve-3d;
+	-webkit-transform: rotateY(120deg);
+}
+.board .chess .face{
+	top: 0px;
+	left: 0px;
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	-webkit-backface-visibility: hidden;
+	background-size: 200px 200px;
+	background: #fff;
+	-webkit-transform: translateZ(28.8675px);
+}
+.board .chess .faceO{
+	background: url(../img/sprite.png) #FA8181;
+	-webkit-transform: translateX(25px) translateZ(-14.4338px) rotateY(120deg);
+}
+.board .chess .faceX{
+	background: url(../img/sprite.png) -200px 0px #74C3FF;
+	-webkit-transform: translateX(-25px) translateZ(-14.4338px) rotateY(240deg);
+}
+
+
+
+
+
+/** cube chess class ------------> **/
