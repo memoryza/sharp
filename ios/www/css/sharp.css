@@ -64,8 +64,9 @@ body{
 	height: 100%;
 	top:0px;
 	left:0px;
-	-webkit-transform: scaleX(0.52) scaleY(0.9);
+	-webkit-transform: scaleX(0.58) scaleY(1) translateZ(-80px);
 	box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.5);
+	-webkit-transform-style: preserve-3d;
 }
 
 
