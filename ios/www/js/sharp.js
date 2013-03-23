@@ -1,8 +1,9 @@
 var doc = document;
 
 var clickEvent =  'ontouchstart' in window ? 'touchend' : 'click';
-var Canvas = doc.querySelector('canvas');
 
+var  Board = doc.querySelector('.board');
+var Chesses = doc.querySelectorAll('.chess');
 
 var array,step,turn;
 function init(){
@@ -14,8 +15,15 @@ function init(){
 
 init();
 
-Canvas.addEventListener(clickEvent,function(e){
-	if(turn !== 'human'){return false;}
+Board.addEventListener(clickEvent,function(e){
+ if(turn !== 'human'){return false;}
+
+    var _target = e.target;
+
+    // if(_target.classList.contains(''))
+
+
+
     var x,y;
     e = e.changedTouches ? e.changedTouches[0] : e;
     if (e.pageX || e.pageY) { 
@@ -25,12 +33,14 @@ Canvas.addEventListener(clickEvent,function(e){
       x = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft; 
       y = e.clientY + document.body.scrollTop + document.documentElement.scrollTop; 
     } 
-    x -= Canvas.offsetLeft;
-    y -= Canvas.offsetTop;
+    x -= Board.offsetLeft;
+    y -= Board.offsetTop;
+
+    console.log(x + ',' + y);
 
     var w,h;
-    w = Canvas.width;
-    h = Canvas.height;
+    w = Board.clientWidth;
+    h = Board.clientHeight;
 
     var _v1 = ~~(y/h*3);
     var _v2 = ~~(x/w*3);
@@ -38,9 +48,7 @@ Canvas.addEventListener(clickEvent,function(e){
     if(!array[_v1]){return false;}
     if(array[_v1][_v2] !== null){return false;}
     array[_v1][_v2] = 'you';
-    
     next();
-
 },false);
 
 function comTurn(){
@@ -210,43 +218,20 @@ function findPuts(){
 }
 
 function render(){
-    var ctx = Canvas.getContext('2d');
-    var w = Canvas.width,h = Canvas.height;
-    ctx.clearRect(0,0,w,h);
-    ctx.beginPath();
-    ctx.moveTo(0,~~(w/3)+0.5);
-    ctx.lineTo(h,~~(w/3)+0.5);
-
-    ctx.moveTo(0,~~(w/3*2)+0.5);
-    ctx.lineTo(h,~~(w/3*2)+0.5);
-
-    ctx.moveTo(~~(h/3)+0.5,0);
-    ctx.lineTo(~~(h/3)+0.5,w);
-
-    ctx.moveTo(~~(h/3*2)+0.5,0);
-    ctx.lineTo(~~(h/3*2)+0.5,w);
-
-    ctx.strokeStyle = '#999';
-
-    ctx.stroke();
-    ctx.closePath();
-
-
     for(var i=0;i<array.length;i++){
         for(var j=0;j<array[i].length;j++){
+            var _chess = Chesses[i*3 + j];
             if(array[i][j] !== null ){
-            	ctx.save();
-            	var text;
-            	ctx.font = '30px';
-            	if(array[i][j] == 'you'){
-            		text = 'O';
-            		ctx.fillStyle = 'red';
+                if(array[i][j] == 'you'){
+                    _chess.classList.remove('x');
+                    _chess.classList.add('o');
             	}else{
-            		text = 'X';
-            		ctx.fillStyle = 'blue';
+                    _chess.classList.remove('o');
+                    _chess.classList.add('x');
             	}
-                ctx.fillText(text,~~(w/3)*j + ~~(w/6),~~(h/3)*i + ~~(h/6) );
-                ctx.restore();
+            }else{
+                _chess.classList.remove('o');
+                _chess.classList.remove('x');
             }
         }
     }
@@ -307,51 +292,50 @@ function judgeWin(){
     if((step >= 9 && !hasWiner) || hasWiner ){
     	if(!!winner){
             if(winner == 'you'){
-                alert('你赢了:)');
+                //document.getElementById('info').innerHTML = '你赢了:)';
             }else{
-                alert('你输了:(');
+                //document.getElementById('info').innerHTML = '你输了:(';
             }
     	}else{
-    		alert('平局!');
+            //document.getElementById('info').innerHTML = '平局!';
     	}
     	finished = true;
     }
     return finished;
-
 }
 
 
+//
+doc.querySelector('.board').addEventListener('touchend',function(){});
 
 
 
 //<----------------- Chess class
-var Chess = Chess || {};
-(function(exports){
+// var Chess = Chess || {};
+// (function(exports){
 
-    exports.count = 0;
-    exports.top = null;      //the first Chess in the square
-    exports.bottom = null;   //the last Chess in the square
+//     exports.count = 0;
+//     exports.top = null;      //the first Chess in the square
+//     exports.bottom = null;   //the last Chess in the square
 
-    exports.create = function(param){
-        var newChess = Object.create(chessFn);
-        var def = {
+//     exports.create = function(param){
+//         var newChess = Object.create(chessFn);
+//         var def = {
 
-        };
-        $$.extend(def, param);
-        $$.extend(newChess, def);
-        newChess.init();
-        return newChess;
-    }
+//         };
+//         $$.extend(def, param);
+//         $$.extend(newChess, def);
+//         newChess.init();
+//         return newChess;
+//     }
 
-    var chessFn = {
-        init:function(){
-
-
-            exports.count++;
-        }
-    }
+//     var chessFn = {
+//         init:function(){
 
 
+//             exports.count++;
+//         }
+//     }
 
-})(Chess)
-//Chess class------------------->
+// })(Chess)
+//cube class------------------->
