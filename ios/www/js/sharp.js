@@ -28,11 +28,6 @@ Board.addEventListener(clickEvent,function(e){
  if(turn !== 'human'){return false;}
 
     var _target = e.target;
-
-    // if(_target.classList.contains(''))
-
-
-
     var x,y;
     e = e.changedTouches ? e.changedTouches[0] : e;
     if (e.pageX || e.pageY) { 
@@ -249,12 +244,16 @@ function next(){
     step++;
     var finish = judgeWin();
     if(!!finish){
-    	init();
+        setTimeout(function(){
+            init();
+        },500);
     	return;
     }
     if(turn == 'human'){
         turn = 'computer';
-        comTurn();
+        setTimeout(function(){
+            comTurn();
+        },500);
     }else{
         turn = 'human';
         console.log('wait for human!');
