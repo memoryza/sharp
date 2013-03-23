@@ -324,16 +324,34 @@ function judgeWin(){
 
 
 
-//<----------------- cube class
-var Cube;
-;(function(exports){
+//<----------------- Chess class
+var Chess = Chess || {};
+(function(exports){
 
     exports.count = 0;
-    exports.top = null;      //the first cube in the square
-    exports.bottom = null;   //the last cube in the square
+    exports.top = null;      //the first Chess in the square
+    exports.bottom = null;   //the last Chess in the square
+
+    exports.create = function(param){
+        var newChess = Object.create(chessFn);
+        var def = {
+
+        };
+        $$.extend(def, param);
+        $$.extend(newChess, def);
+        newChess.init();
+        return newChess;
+    }
+
+    var chessFn = {
+        init:function(){
+
+
+            exports.count++;
+        }
+    }
 
 
 
-
-})(Cube)
-//cube class------------------->
+})(Chess)
+//Chess class------------------->
