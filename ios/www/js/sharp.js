@@ -3,7 +3,7 @@ var doc = document;
 var clickEvent =  'ontouchstart' in window ? 'touchend' : 'click';
 
 var  Board = doc.querySelector('.board');
-var Chesses = doc.querySelectorAll('.chess');
+var chesses = [];
 
 var array,step,turn;
 function init(){
@@ -13,7 +13,16 @@ function init(){
     turn = 'human';
 }
 
-init();
+function initChess(){
+    for(var i=0; i<9; i++){
+        chesses[i] = Chess.create();
+        chesses[i].setStyle("left", chesses[i].id % 3 * 101 + "px");
+        chesses[i].setStyle("top", parseInt(chesses[i].id / 3, 10) * 101 + "px");
+    }
+}
+
+
+
 
 Board.addEventListener(clickEvent,function(e){
  if(turn !== 'human'){return false;}
@@ -220,18 +229,15 @@ function findPuts(){
 function render(){
     for(var i=0;i<array.length;i++){
         for(var j=0;j<array[i].length;j++){
-            var _chess = Chesses[i*3 + j];
+            var _chess = chesses[i*3 + j];
             if(array[i][j] !== null ){
                 if(array[i][j] == 'you'){
-                    _chess.classList.remove('x');
-                    _chess.classList.add('o');
+                    _chess.setO();
             	}else{
-                    _chess.classList.remove('o');
-                    _chess.classList.add('x');
+                    _chess.setX();
             	}
             }else{
-                _chess.classList.remove('o');
-                _chess.classList.remove('x');
+                _chess.setW();
             }
         }
     }
@@ -311,31 +317,143 @@ doc.querySelector('.board').addEventListener('touchend',function(){});
 
 
 //<----------------- Chess class
-// var Chess = Chess || {};
-// (function(exports){
+var Chess = Chess || {};
+(function(exports){
 
-//     exports.count = 0;
-//     exports.top = null;      //the first Chess in the square
-//     exports.bottom = null;   //the last Chess in the square
-
-//     exports.create = function(param){
-//         var newChess = Object.create(chessFn);
-//         var def = {
-
-//         };
-//         $$.extend(def, param);
-//         $$.extend(newChess, def);
-//         newChess.init();
-//         return newChess;
-//     }
-
-//     var chessFn = {
-//         init:function(){
+    exports.count = 0;
+    exports.first = null;      //the first Chess in the square
+    exports.last = null;   //the last Chess in the square
+    exports.chesses = [];
+    "setX setO setW shake".split(" ").forEach(function(name){
+        exports[name] = function(){
+            exports.chesses.forEach(function(chess){
+                chess[name]();
+            })
+        }
+    })
 
 
-//             exports.count++;
-//         }
-//     }
 
-// })(Chess)
+    exports.create = function(param){
+        var newChess = Object.create(chessFn);
+        var def = {
+            id:null,
+            elem:null,
+            status:"w",
+            parent:$$(".board").get(0),
+            template:'<div class="chess"><div class="shadow animated"></div><div class="trig animated hinge"><div class="rotate animated"><div class="faceO face"></div><div class="faceX face"></div><div class="faceW face"></div></div></div></div>'
+        };
+        $$.extend(def, param);
+        $$.extend(newChess, def);
+        newChess.init();
+        //record the first and the last one
+        if(exports.count === 0){
+            exports.first = newChess;
+        }
+        else{
+            exports.last = newChess;
+        }
+        exports.chesses.push(newChess);
+        newChess.id = exports.count;
+        exports.count++;
+        return newChess;
+    }
+
+    var chessFn = {
+        init:function(){
+            var that = this;
+            this.elem = $$(this.template).get(0);
+            this.shadowElem = $$(this.elem).find(".shadow").get(0);
+
+            $$(this.elem).on("webkitTransitionEnd", function(){
+                that._transitionend();
+            })
+            //animationend
+            $$(this.elem).on("webkitAnimationEnd", function(){
+                that._animationend();
+            })
+
+            $$(this.parent).append(this.elem);
+        },
+        setStyle:function(){
+            var __elem = $$(this.elem);
+            __elem.style.apply(__elem, arguments);
+        },
+        clearAnim:function(){
+            $$(this.elem)
+            .removeClass("o2w")
+            .removeClass("o2x")
+            .removeClass("x2w")
+            .removeClass("x2o")
+            .removeClass("w2x")
+            .removeClass("w2o");
+        },
+        setX:function(){
+            if(!(this.status === "x")){
+                this.showShadow();
+                this.clearAnim();
+            }
+            if(this.status === "w"){
+                $$(this.elem).addClass("w2x");
+            }
+            else if(this.status === "o"){
+                $$(this.elem).addClass("o2x");
+            }
+            this.status = "x";
+        },
+        setO:function(){
+            if(!(this.status === "o")){
+                this.showShadow();
+                this.clearAnim();
+            }
+            if(this.status === "w"){
+                $$(this.elem).addClass("w2o");
+            }
+            else if(this.status === "x"){
+                $$(this.elem).addClass("x2o");
+            }
+            this.status = "o";
+        },
+        setW:function(){
+            if(!(this.status === "w")){
+                this.showShadow();
+                this.clearAnim();
+            }
+            if(this.status === "x"){
+                $$(this.elem).addClass("x2w");
+            }
+            else if(this.status === "o"){
+                $$(this.elem).addClass("o2w");
+            }
+            this.status = "w";
+        },
+        shake:function(){
+            $$(this.elem).addClass("shake");
+        },
+        _transitionend:function(){
+            if($$(this.elem).hasClass("showShadow")){
+                this.hideShadow();
+            }
+        },
+        _animationend:function(){
+            $$(this.elem).removeClass("shake");
+        },
+        showShadow:function(){
+            $$(this.elem).addClass("showShadow");
+            $$(this.shadowElem).addClass("flash");
+            this.setStyle("-webkit-transform", "translateZ(1000px)");
+        },
+        hideShadow:function(){
+            $$(this.elem).removeClass("showShadow");
+            $$(this.shadowElem).removeClass("flash");
+            this.setStyle("-webkit-transform", "translateZ(0px)");
+        }
+    }
+
+})(Chess)
 //cube class------------------->
+
+
+
+initChess();
+init();

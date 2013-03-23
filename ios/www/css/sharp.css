@@ -1,28 +1,183 @@
 body{
-	background: #f0f0f0;
+	background: #e8e8e8;
+	-webkit-backface-visibility: hidden;
+}
+.animated {
+	-webkit-animation-duration: 0.5s;
+	   -moz-animation-duration: 0.5s;
+	     -o-animation-duration: 0.5s;
+	        animation-duration: 0.5s;
+	-webkit-animation-fill-mode: both;
+	   -moz-animation-fill-mode: both;
+	     -o-animation-fill-mode: both;
+	        animation-fill-mode: both;
 }
 
-
-/** <--------- cube chess class **/
+.animated.hinge {
+	-webkit-animation-duration: 1s;
+	   -moz-animation-duration: 1s;
+	     -o-animation-duration: 1s;
+	        animation-duration: 1s;
+}
 
 .board{
 	width: 310px;
 	height: 300px;
 	position: relative;
+	line-height: 0px;
+	-webkit-transform-style: preserve-3d;
+	-webkit-perspective: 99999999px;
 }
 
+/** <--------- anim frame    **/
+@-webkit-keyframes flash {
+	0%, 100% {opacity: 0;}	
+	50% {opacity: 1;}
+}
+
+@-moz-keyframes flash {
+	0%, 100% {opacity: 0;}	
+	50% {opacity: 1;}
+}
+
+@-o-keyframes flash {
+	0%, 100% {opacity: 0;}	
+	50% {opacity: 1;}
+}
+
+@keyframes flash {
+	0%, 100% {opacity: 0;}	
+	50% {opacity: 1;}
+}
+
+
+@-webkit-keyframes w2o {
+	0% {
+		-webkit-transform: rotateY(0deg);
+	}
+
+	50% {
+		-webkit-transform: rotateY(-130deg);
+	}
+
+	70% {
+		-webkit-transform: rotateY(-110deg);
+	}
+
+	100% {
+		-webkit-transform: rotateY(-120deg);
+	}
+}
+
+
+@-webkit-keyframes w2x {
+	0% {
+		-webkit-transform: rotateY(0deg);
+	}
+
+	50% {
+		-webkit-transform: rotateY(130deg);
+	}
+
+	70% {
+		-webkit-transform: rotateY(110deg);
+	}
+
+	100% {
+		-webkit-transform: rotateY(120deg);
+	}
+}
+
+@-webkit-keyframes o2x {
+	0% {
+		-webkit-transform: rotateY(-120deg);
+	}
+
+	50% {
+		-webkit-transform: rotateY(-250deg);
+	}
+
+	70% {
+		-webkit-transform: rotateY(-230deg);
+	}
+
+	100% {
+		-webkit-transform: rotateY(-240deg);
+	}
+}
+@-webkit-keyframes o2w {
+	0% {
+		-webkit-transform: rotateY(-120deg);
+	}
+
+	50% {
+		-webkit-transform: rotateY(10deg);
+	}
+
+	70% {
+		-webkit-transform: rotateY(-10deg);
+	}
+
+	100% {
+		-webkit-transform: rotateY(0deg);
+	}
+}
+@-webkit-keyframes x2o {
+	0% {
+		-webkit-transform: rotateY(-240deg);
+	}
+
+	50% {
+		-webkit-transform: rotateY(-110deg);
+	}
+
+	70% {
+		-webkit-transform: rotateY(-130deg);
+	}
+
+	100% {
+		-webkit-transform: rotateY(-120deg);
+	}
+}
+@-webkit-keyframes x2w {
+	0% {
+		-webkit-transform: rotateY(120deg);
+	}
+
+	50% {
+		-webkit-transform: rotateY(-10deg);
+	}
+
+	70% {
+		-webkit-transform: rotateY(10deg);
+	}
+
+	100% {
+		-webkit-transform: rotateY(0deg);
+	}
+}
+@-webkit-keyframes shake {
+	0%, 100% {-webkit-transform:translateZ(-28.8675px) rotateZ(0);}
+	10%, 30%, 50%, 70%, 90% {-webkit-transform:translateZ(-28.8675px) rotateZ(5deg);}
+	20%, 40%, 60%, 80% {-webkit-transform:translateZ(-28.8675px) rotateZ(-5deg);}
+}
+
+/** anim frame-------------> **/
+
+
+
+
+
+/** <--------- cube chess class **/
 .board .chess{
 	display: inline-block;
-/*	position: absolute;
-*//*	top: 0px;
-	left: 0px;*/
+	position: absolute;
 	margin: 1px;
 	width: 100px;
 	height: 100px;
 	-webkit-perspective: 1000px;
 	-webkit-transform-style: preserve-3d;
 	-webkit-perspective-origin: center center;
-	position: relative;
 }
 
 
@@ -40,17 +195,54 @@ body{
 .board .chess .rotate{
 	width: 100%;
 	height: 100%;
-	-webkit-transition:-webkit-transform 500ms;
 	-webkit-transform-style: preserve-3d;
 	-webkit-transform: rotateY(0);
 }
 
-.board .chess.x .rotate{
-	-webkit-transform: rotateY(120deg);
+.board .chess.x2w .rotate{
+	-webkit-animation-name: x2w;
+	-moz-animation-name: x2w;
+	-o-animation-name: x2w;
+	animation-name: x2w;
+}
+.board .chess.x2o .rotate{
+	-webkit-animation-name: x2o;
+	-moz-animation-name: x2o;
+	-o-animation-name: x2o;
+	animation-name: x2o;
+}
+.board .chess.o2w .rotate{
+	-webkit-animation-name: o2w;
+	-moz-animation-name: o2w;
+	-o-animation-name: o2w;
+	animation-name: o2w;
 }
 
-.board .chess.o .rotate{
-	-webkit-transform: rotateY(-120deg);
+.board .chess.o2x .rotate{
+	-webkit-animation-name: o2x;
+	-moz-animation-name: o2x;
+	-o-animation-name: o2x;
+	animation-name: o2x;
+}
+.board .chess.w2x .rotate{
+	-webkit-animation-name: w2x;
+	-moz-animation-name: w2x;
+	-o-animation-name: w2x;
+	animation-name: w2x;
+}
+
+.board .chess.w2o .rotate{
+	-webkit-animation-name: w2o;
+	-moz-animation-name: w2o;
+	-o-animation-name: w2o;
+	animation-name: w2o;
+}
+
+.board .chess.shake .trig{
+	-webkit-animation-name: shake;
+	-moz-animation-name: shake;
+	-o-animation-name: shake;
+	animation-name: shake;
 }
 
 .board .chess .face{
@@ -76,16 +268,22 @@ body{
 	-webkit-transform: translateX(-25px) translateZ(-14.4338px) rotateY(240deg);
 }
 .board .shadow{
+	opacity: 0;
 	position: absolute;
 	width: 100%;
 	height: 100%;
 	top:0px;
 	left:0px;
-	-webkit-transform: scaleX(0.58) scaleY(0.9) translateZ(-80px);
-	box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.5);
+	box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.6);
+	-webkit-transform: scaleX(0.7) scaleY(0.9) translateZ(-80px);
 	-webkit-transform-style: preserve-3d;
 }
-
+.flash {
+	-webkit-animation-name: flash;
+	-moz-animation-name: flash;
+	-o-animation-name: flash;
+	animation-name: flash;
+}
 
 
 
