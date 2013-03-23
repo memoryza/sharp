@@ -2,6 +2,9 @@ var doc = document;
 
 var clickEvent =  'ontouchstart' in window ? 'touchend' : 'click';
 
+var  Board = doc.querySelector('.board');
+var Chesses = doc.querySelectorAll('.chess');
+
 var array,step,turn;
 function init(){
     array = [[null,null,null],[null,null,null],[null,null,null]];
@@ -10,36 +13,43 @@ function init(){
     turn = 'human';
 }
 
-// init();
+init();
 
-// Canvas.addEventListener(clickEvent,function(e){
-// 	if(turn !== 'human'){return false;}
-//     var x,y;
-//     e = e.changedTouches ? e.changedTouches[0] : e;
-//     if (e.pageX || e.pageY) { 
-//       x = e.pageX;
-//       y = e.pageY;
-//     }else { 
-//       x = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft; 
-//       y = e.clientY + document.body.scrollTop + document.documentElement.scrollTop; 
-//     } 
-//     x -= Canvas.offsetLeft;
-//     y -= Canvas.offsetTop;
+Board.addEventListener(clickEvent,function(e){
+ if(turn !== 'human'){return false;}
 
-//     var w,h;
-//     w = Canvas.width;
-//     h = Canvas.height;
+    var _target = e.target;
 
-//     var _v1 = ~~(y/h*3);
-//     var _v2 = ~~(x/w*3);
+    // if(_target.classList.contains(''))
 
-//     if(!array[_v1]){return false;}
-//     if(array[_v1][_v2] !== null){return false;}
-//     array[_v1][_v2] = 'you';
-    
-//     next();
 
-// },false);
+
+    var x,y;
+    e = e.changedTouches ? e.changedTouches[0] : e;
+    if (e.pageX || e.pageY) { 
+      x = e.pageX;
+      y = e.pageY;
+    }else { 
+      x = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft; 
+      y = e.clientY + document.body.scrollTop + document.documentElement.scrollTop; 
+    } 
+    x -= Board.offsetLeft;
+    y -= Board.offsetTop;
+
+    console.log(x + ',' + y);
+
+    var w,h;
+    w = Board.clientWidth;
+    h = Board.clientHeight;
+
+    var _v1 = ~~(y/h*3);
+    var _v2 = ~~(x/w*3);
+
+    if(!array[_v1]){return false;}
+    if(array[_v1][_v2] !== null){return false;}
+    array[_v1][_v2] = 'you';
+    next();
+},false);
 
 function comTurn(){
 	if(turn !== 'computer'){return false;}
@@ -208,43 +218,20 @@ function findPuts(){
 }
 
 function render(){
-    var ctx = Canvas.getContext('2d');
-    var w = Canvas.width,h = Canvas.height;
-    ctx.clearRect(0,0,w,h);
-    ctx.beginPath();
-    ctx.moveTo(0,~~(w/3)+0.5);
-    ctx.lineTo(h,~~(w/3)+0.5);
-
-    ctx.moveTo(0,~~(w/3*2)+0.5);
-    ctx.lineTo(h,~~(w/3*2)+0.5);
-
-    ctx.moveTo(~~(h/3)+0.5,0);
-    ctx.lineTo(~~(h/3)+0.5,w);
-
-    ctx.moveTo(~~(h/3*2)+0.5,0);
-    ctx.lineTo(~~(h/3*2)+0.5,w);
-
-    ctx.strokeStyle = '#999';
-
-    ctx.stroke();
-    ctx.closePath();
-
-
     for(var i=0;i<array.length;i++){
         for(var j=0;j<array[i].length;j++){
+            var _chess = Chesses[i*3 + j];
             if(array[i][j] !== null ){
-            	ctx.save();
-            	var text;
-            	ctx.font = '30px';
-            	if(array[i][j] == 'you'){
-            		text = 'O';
-            		ctx.fillStyle = 'red';
+                if(array[i][j] == 'you'){
+                    _chess.classList.remove('x');
+                    _chess.classList.add('o');
             	}else{
-            		text = 'X';
-            		ctx.fillStyle = 'blue';
+                    _chess.classList.remove('o');
+                    _chess.classList.add('x');
             	}
-                ctx.fillText(text,~~(w/3)*j + ~~(w/6),~~(h/3)*i + ~~(h/6) );
-                ctx.restore();
+            }else{
+                _chess.classList.remove('o');
+                _chess.classList.remove('x');
             }
         }
     }
@@ -305,12 +292,12 @@ function judgeWin(){
     if((step >= 9 && !hasWiner) || hasWiner ){
     	if(!!winner){
             if(winner == 'you'){
-                document.getElementById('info').innerHTML = '你赢了:)';
+                //document.getElementById('info').innerHTML = '你赢了:)';
             }else{
-                document.getElementById('info').innerHTML = '你输了:(';
+                //document.getElementById('info').innerHTML = '你输了:(';
             }
     	}else{
-            document.getElementById('info').innerHTML = '平局!';
+            //document.getElementById('info').innerHTML = '平局!';
     	}
     	finished = true;
     }
