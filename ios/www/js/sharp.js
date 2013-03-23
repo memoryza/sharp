@@ -4,13 +4,14 @@ var clickEvent =  'ontouchstart' in window ? 'touchend' : 'click';
 
 var  Board = doc.querySelector('.board');
 var chesses = [];
+var history = [];
 
 var array,step,turn;
 function init(){
     array = [[null,null,null],[null,null,null],[null,null,null]];
     step = 0;
     render();
-    turn = 'human';
+    turn = 'p1';
 }
 
 function initChess(){
@@ -23,7 +24,7 @@ function initChess(){
 
 
 Board.addEventListener(clickEvent,function(e){
- if(turn !== 'human'){return false;}
+ if(turn !== 'p1'){return false;}
     var _target = e.target;
     var x,y;
     e = e.changedTouches ? e.changedTouches[0] : e;
@@ -46,12 +47,11 @@ Board.addEventListener(clickEvent,function(e){
 
     if(!array[_v1]){return false;}
     if(array[_v1][_v2] !== null){chesses[_v1*3 + _v2].shake(); return false;}
-    array[_v1][_v2] = 'you';
-    next();
+    putChess('o',{x:_v1,y:_v2});
 },false);
 
 function comTurn(){
-	if(turn !== 'computer'){return false;}
+	if(turn !== 'p2'){return false;}
     var _max = 0;
     var _putsArray = [];
     var _puts = findPuts();
@@ -69,13 +69,18 @@ function comTurn(){
     }
 
     var num = Math.floor(Math.random()*_putsArray.length);
-
     var _x = ~~_putsArray[num].split(',')[0],
     _y = ~~_putsArray[num].split(',')[1];
-    array[_x][_y] = 'com';
-    next();
+    putChess('x',{x:_x,y:_y});
 }
 
+
+
+function putChess(type,coord){
+    array[coord.x][coord.y] = type;
+    next();
+    history.push(coord);
+}
 
 
 //每个格都有权重分配
@@ -123,7 +128,7 @@ function findPuts(){
             }
 
             if(x1==x2 && x1 !== null){
-                if(x1=='com'){
+                if(x1=='x'){
                     wight_array[i][j] += 40;
                 }else{
                     wight_array[i][j] += 18;
@@ -132,7 +137,7 @@ function findPuts(){
             }
 
             if(y1 == y2 && y1 !== null){
-                if(y1 == 'com'){
+                if(y1 == 'x'){
                     wight_array[i][j] += 40;
                 }else{
                     wight_array[i][j] += 18;
@@ -141,7 +146,7 @@ function findPuts(){
             }
 
             if( (x1 !== null && x2 == null) || (x1 == null && x2 !== null) ){
-                if(x1 == 'com' || x2 == 'com'){
+                if(x1 == 'x' || x2 == 'x'){
                     wight_array[i][j] += 3;
                 }else{
                     wight_array[i][j] += 2;
@@ -149,7 +154,7 @@ function findPuts(){
             }
 
             if( (y1 !== null && y2 == null) || (y1 == null && y2 !== null) ){
-                if(x1 == 'com' || x2 == 'com'){
+                if(x1 == 'x' || x2 == 'x'){
                     wight_array[i][j] += 3;
                 }else{
                     wight_array[i][j] += 2;
@@ -166,7 +171,7 @@ function findPuts(){
 
             if(o1 !== undefined){
                 if(o1 == o2 && o1 !== null){
-                    if(o1=='com'){
+                    if(o1=='x'){
                         wight_array[i][j] += 40;
                     }else{
                         wight_array[i][j] += 18;
@@ -174,7 +179,7 @@ function findPuts(){
                     }
                 }
                 if( (o1 !== null && o2 == null) || (o1 == null && o2 !== null) ){
-                    if(o1 == 'com' || o2 == 'com'){
+                    if(o1 == 'x' || o2 == 'x'){
                         wight_array[i][j] += 3;
                     }else{
                         wight_array[i][j] += 2;
@@ -187,14 +192,14 @@ function findPuts(){
 
             if(o3 !== undefined){
                 if(o3 == o4 && o3 !== null){
-                    if(o3=='com'){
+                    if(o3=='x'){
                         wight_array[i][j] += 40;
                     }else{
                         wight_array[i][j] += 18;
                     }
                 }
                 if( (o3 !== null && o4 == null) || (o3 == null && o4 !== null) ){
-                    if(o3 == 'com' || o4 == 'com'){
+                    if(o3 == 'x' || o4 == 'x'){
                         wight_array[i][j] += 3;
                     }else{
                         wight_array[i][j] += 2;
@@ -217,7 +222,7 @@ function render(){
         for(var j=0;j<array[i].length;j++){
             var _chess = chesses[i*3 + j];
             if(array[i][j] !== null ){
-                if(array[i][j] == 'you'){
+                if(array[i][j] == 'o'){
                     _chess.setO();
             	}else{
                     _chess.setX();
@@ -231,23 +236,30 @@ function render(){
 }
 
 function next(){
-	render();
+
     step++;
+    //当步骤为8的时候 移除一个。
+    if(step >= 8){
+        var _coord = history[step-8];
+        array[_coord.x][_coord.y] = null;
+    }
+
+    render();
+
     var finish = judgeWin();
     if(!!finish){
         setTimeout(function(){
             init();
-        },500);
+        },1000);
     	return;
     }
-    if(turn == 'human'){
-        turn = 'computer';
+    if(turn == 'p1'){
+        turn = 'p2';
         setTimeout(function(){
             comTurn();
         },500);
     }else{
-        turn = 'human';
-        console.log('wait for human!');
+        turn = 'p1';
     }
 }
 
@@ -285,9 +297,9 @@ function judgeWin(){
         hasWiner = true;
     }
 
-    if((step >= 9 && !hasWiner) || hasWiner ){
+    if(hasWiner ){
     	if(!!winner){
-            if(winner == 'you'){
+            if(winner == 'o'){
                 //document.getElementById('info').innerHTML = '你赢了:)';
             }else{
                 //document.getElementById('info').innerHTML = '你输了:(';
