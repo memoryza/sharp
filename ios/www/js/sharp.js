@@ -6,12 +6,37 @@ var  Board = doc.querySelector('.board');
 var chesses = [];
 var history = [];
 
-var array,step,turn;
+//游戏选项
+var options = {
+    endLess : false,
+    roles : {
+        p1 : {
+            type : 'people',
+            name : 'p1',
+            value : 'o'
+        },
+        p2 : {
+            type : 'people',
+            name : 'p2',
+            value : 'x'
+        }
+    }
+};
+
+//棋盘的状态
+var sta = {
+    step : 0,
+    round : 0,
+    history : [],
+    turn : options.roles.p1,
+    offensive : options.roles.p1,
+    array : [[null,null,null],[null,null,null],[null,null,null]]
+};
+
 function init(){
-    array = [[null,null,null],[null,null,null],[null,null,null]];
-    step = 0;
+    sta.step = 0;
+    sta.array = [[null,null,null],[null,null,null],[null,null,null]];
     render();
-    turn = 'p1';
 }
 
 function initChess(){
@@ -22,9 +47,11 @@ function initChess(){
     }
 }
 
-
 Board.addEventListener(clickEvent,function(e){
- if(turn !== 'p1'){return false;}
+
+    if(sta.turn.type !== 'people'){return false;}
+    var array = sta.array;
+
     var _target = e.target;
     var x,y;
     e = e.changedTouches ? e.changedTouches[0] : e;
@@ -47,11 +74,12 @@ Board.addEventListener(clickEvent,function(e){
 
     if(!array[_v1]){return false;}
     if(array[_v1][_v2] !== null){chesses[_v1*3 + _v2].shake(); return false;}
-    putChess('o',{x:_v1,y:_v2});
+
+    putChess(sta.turn.value,{x:_v1,y:_v2})
 },false);
 
 function comTurn(){
-	if(turn !== 'p2'){return false;}
+	if(sta.turn.type !== 'computer'){return false;}
     var _max = 0;
     var _putsArray = [];
     var _puts = findPuts();
@@ -77,6 +105,7 @@ function comTurn(){
 
 
 function putChess(type,coord){
+    var array = sta.array;
     array[coord.x][coord.y] = type;
     next();
     history.push(coord);
@@ -90,6 +119,7 @@ function putChess(type,coord){
 //有获胜希望的 权重 ＋1
 //能够阻止对方连成2个点 并有获胜希望的 权重 ＋2
 function findPuts(){
+    var array = sta.array;
     var wight_array = [[0,0,0],[0,0,0],[0,0,0]];
     for(var i=0;i<array.length;i++){
         for(var j=0;j<array.length;j++){
@@ -218,11 +248,12 @@ function findPuts(){
 
 
 function render(){
-    for(var i=0;i<array.length;i++){
-        for(var j=0;j<array[i].length;j++){
+
+    for(var i=0;i<sta.array.length;i++){
+        for(var j=0;j<sta.array[i].length;j++){
             var _chess = chesses[i*3 + j];
-            if(array[i][j] !== null ){
-                if(array[i][j] == 'o'){
+            if(sta.array[i][j] !== null ){
+                if(sta.array[i][j] == 'o'){
                     _chess.setO();
             	}else{
                     _chess.setX();
@@ -237,12 +268,13 @@ function render(){
 
 function next(){
 
-    step++;
+    sta.step++;
+
     //当步骤为8的时候 移除一个。
-    if(step >= 8){
-        var _coord = history[step-8];
-        array[_coord.x][_coord.y] = null;
-    }
+    // if(step >= 8){
+    //     var _coord = history[step-8];
+    //     array[_coord.x][_coord.y] = null;
+    // }
 
     render();
 
@@ -253,21 +285,37 @@ function next(){
         },1000);
     	return;
     }
-    if(turn == 'p1'){
-        turn = 'p2';
-        setTimeout(function(){
-            comTurn();
-        },500);
+
+    if(sta.turn == options.roles.p1){
+        sta.turn = options.roles.p2;
+
     }else{
-        turn = 'p1';
+        sta.turn = options.roles.p1;
     }
+
+    if(sta.turn.type == 'computer'){
+        setTimeout(function(){
+             comTurn();
+        },500);
+    }
+
+
+    // if(turn == 'p1'){
+    //     turn = 'p2';
+    //     setTimeout(function(){
+    //         comTurn();
+    //     },500);
+    // }else{
+    //     turn = 'p1';
+    // }
 }
 
 function judgeWin(){
-	if(step < 4){return;}
+	if(sta.step < 4){return;}
 	var winner;
 	var hasWiner = false;
 	var finished = false;
+    var array = sta.array;
 
     for(var i=0;i<array.length;i++){
         for(var j=0;j<array[i].length;j++){
@@ -297,7 +345,7 @@ function judgeWin(){
         hasWiner = true;
     }
 
-    if(hasWiner ){
+    if(sta.step >=9 || hasWiner ){
     	if(!!winner){
             if(winner == 'o'){
                 //document.getElementById('info').innerHTML = '你赢了:)';
