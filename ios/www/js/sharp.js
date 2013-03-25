@@ -16,7 +16,7 @@ var options = {
             value : 'o'
         },
         p2 : {
-            type : 'people',
+            type : 'computer',
             name : 'p2',
             value : 'x'
         }
