@@ -16,7 +16,7 @@ var options = {
             value : 'o'
         },
         p2 : {
-            type : 'computer',
+            type : 'people',
             name : 'p2',
             value : 'x'
         }
@@ -36,6 +36,15 @@ var sta = {
 function init(){
     sta.step = 0;
     sta.array = [[null,null,null],[null,null,null],[null,null,null]];
+    sta.offensive = sta.round % 2 == 0 ? options.roles.p1 : options.roles.p2;
+    sta.turn = sta.offensive;
+
+    if(sta.turn.type == 'people'){
+        console.log('wait for start!');
+    }else if(sta.turn.type == 'computer'){
+        comTurn();
+    }
+
     render();
 }
 
@@ -82,7 +91,7 @@ function comTurn(){
 	if(sta.turn.type !== 'computer'){return false;}
     var _max = 0;
     var _putsArray = [];
-    var _puts = findPuts();
+    var _puts = findPuts(sta.turn.value);
 
     for(var i=0;i<_puts.length;i++){
         for(var j=0;j<_puts.length;j++){
@@ -96,10 +105,15 @@ function comTurn(){
         }
     }
 
+    console.clear();
+    console.log(_puts[0]);
+    console.log(_puts[1]);
+    console.log(_puts[2]);
+
     var num = Math.floor(Math.random()*_putsArray.length);
     var _x = ~~_putsArray[num].split(',')[0],
     _y = ~~_putsArray[num].split(',')[1];
-    putChess('x',{x:_x,y:_y});
+    putChess(sta.turn.value,{x:_x,y:_y});
 }
 
 
@@ -118,17 +132,19 @@ function putChess(type,coord){
 //能为自己连成2个点并且可以获胜 权重 ＋3
 //有获胜希望的 权重 ＋1
 //能够阻止对方连成2个点 并有获胜希望的 权重 ＋2
-function findPuts(){
+function findPuts(value){
     var array = sta.array;
+    var _v = value ;  
     var wight_array = [[0,0,0],[0,0,0],[0,0,0]];
     for(var i=0;i<array.length;i++){
         for(var j=0;j<array.length;j++){
             if(array[i][j] !== null ){continue;}
-
             var x1 = array[i][(j+1)%3],x2 = array[i][(j+2)%3],
             y1 = array[(i+1)%3][j],y2 = array[(i+2)%3][j],
             o1,o2,o3,o4;
             o1 = o2 = o3 = o4 = undefined;
+
+            wight_array[i][j]+=1;
 
             if(i == 0 && j == 0){
                 o1 = array[1][1];
@@ -158,25 +174,23 @@ function findPuts(){
             }
 
             if(x1==x2 && x1 !== null){
-                if(x1=='x'){
+                if(x1==_v){
                     wight_array[i][j] += 40;
                 }else{
                     wight_array[i][j] += 18;
-                    // console.log(i + ',' + j);
                 }
             }
 
             if(y1 == y2 && y1 !== null){
-                if(y1 == 'x'){
+                if(y1 == _v){
                     wight_array[i][j] += 40;
                 }else{
                     wight_array[i][j] += 18;
-                    // console.log(i + ',' + j);
                 }
             }
 
             if( (x1 !== null && x2 == null) || (x1 == null && x2 !== null) ){
-                if(x1 == 'x' || x2 == 'x'){
+                if(x1 == _v || x2 == _v){
                     wight_array[i][j] += 3;
                 }else{
                     wight_array[i][j] += 2;
@@ -184,7 +198,7 @@ function findPuts(){
             }
 
             if( (y1 !== null && y2 == null) || (y1 == null && y2 !== null) ){
-                if(x1 == 'x' || x2 == 'x'){
+                if(x1 == _v || x2 == _v){
                     wight_array[i][j] += 3;
                 }else{
                     wight_array[i][j] += 2;
@@ -201,15 +215,14 @@ function findPuts(){
 
             if(o1 !== undefined){
                 if(o1 == o2 && o1 !== null){
-                    if(o1=='x'){
+                    if(o1==_v){
                         wight_array[i][j] += 40;
                     }else{
                         wight_array[i][j] += 18;
-                        // console.log(i + ',' + j);
                     }
                 }
                 if( (o1 !== null && o2 == null) || (o1 == null && o2 !== null) ){
-                    if(o1 == 'x' || o2 == 'x'){
+                    if(o1 == _v || o2 == _v){
                         wight_array[i][j] += 3;
                     }else{
                         wight_array[i][j] += 2;
@@ -222,14 +235,14 @@ function findPuts(){
 
             if(o3 !== undefined){
                 if(o3 == o4 && o3 !== null){
-                    if(o3=='x'){
+                    if(o3==_v){
                         wight_array[i][j] += 40;
                     }else{
                         wight_array[i][j] += 18;
                     }
                 }
                 if( (o3 !== null && o4 == null) || (o3 == null && o4 !== null) ){
-                    if(o3 == 'x' || o4 == 'x'){
+                    if(o3 == _v || o4 == _v){
                         wight_array[i][j] += 3;
                     }else{
                         wight_array[i][j] += 2;
@@ -267,31 +280,25 @@ function render(){
 }
 
 function next(){
-
-    sta.step++;
-
     //当步骤为8的时候 移除一个。
     // if(step >= 8){
     //     var _coord = history[step-8];
     //     array[_coord.x][_coord.y] = null;
     // }
+    sta.step++;
 
     render();
-
     var finish = judgeWin();
     if(!!finish){
+        //game over and start again!
         setTimeout(function(){
+            sta.round++;
             init();
-        },1000);
-    	return;
+        },500)
+        return;
     }
 
-    if(sta.turn == options.roles.p1){
-        sta.turn = options.roles.p2;
-
-    }else{
-        sta.turn = options.roles.p1;
-    }
+    sta.turn = sta.turn == options.roles.p1 ?  options.roles.p2 :  options.roles.p1;
 
     if(sta.turn.type == 'computer'){
         setTimeout(function(){
@@ -299,15 +306,6 @@ function next(){
         },500);
     }
 
-
-    // if(turn == 'p1'){
-    //     turn = 'p2';
-    //     setTimeout(function(){
-    //         comTurn();
-    //     },500);
-    // }else{
-    //     turn = 'p1';
-    // }
 }
 
 function judgeWin(){
