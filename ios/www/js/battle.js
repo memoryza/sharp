@@ -7,32 +7,26 @@ var chesses = [];
 var history = [];
 var HOST = 'http://localhost:9090'
 
-var SOCKET;
+var SOCKET = io.connect( HOST + '/' + Board.getAttribute('_key'));
 
-var img = [],
-    imgNames = [
-        "sprite"
-    ],
-    sound = [],
-    soundNames = [
-        'cow'
-    ];
+console.log(Board.getAttribute('_key'));
 
-//go with HTML5 audio
-soundManager.useHTML5Audio = true;
-soundManager.preferFlash = false;
-//soundManager.reboot();
+SOCKET.on('next',function(data){
+    console.log(data);
+    putChess(data.type,data.coord);
+    render();
+});
 
 
 // 游戏选项
 // endLess 是不是无尽模式
 // roles
-//    type : 'people','computer','net-friend'
+// type : 'people','computer','net-friend'
 var options = {
     endLess : false,
     roles : {
         p1 : {
-            type : 'people',
+            type : 'net-friend',
             name : 'p1',
             value : 'o'
         },
@@ -57,61 +51,9 @@ var sta = {
 
 //程序初始化
 function init(){
-    bindEvents();
+    start();
 }
 
-
-// var socket = io.connect('http://localhost');
-//   socket.on('news', function (data) {
-//     console.log(data);
-//     socket.emit('my other event', { my: 'data' });
-//   });
-
-function bindEvents(){
-    var _option = doc.getElementById('option');
-
-    var _startWithType = function(type){
-        _option.style.display = 'none';
-        options.roles.p2.type = type;
-
-        if(type == 'net-friend' && SOCKET == undefined){
-            var xhr = new XMLHttpRequest();
-            xhr.onreadystatechange = function(){
-                if(xhr.readyState === 4){
-                    var key = xhr.responseText;
-
-                    console.log(key)
-                    
-                    SOCKET = io.connect( HOST + '/' + key);
-
-                    SOCKET.on('next',function(data){
-                        console.log(data);
-                        putChess(data.type,data.coord);
-                        render();
-                    });
-
-                    start();
-                }
-            };
-            xhr.open('GET', HOST + '/applyKey');
-            xhr.send(null);  
-            return;          
-        }
-        start();
-    }
-
-    doc.getElementById('option_1').addEventListener(clickEvent,function(){
-        _startWithType('computer');
-    },false);
-
-    doc.getElementById('option_2').addEventListener(clickEvent,function(){
-       _startWithType('people');
-    },false);
-
-    doc.getElementById('option_3').addEventListener(clickEvent,function(){
-        _startWithType('net-friend');
-    },false);
-}
 
 //开局
 function start(){
@@ -131,88 +73,16 @@ function start(){
 }
 
 
-//init loading images&sounds
-function initLoader(callback){
-
-
-    var loader = new PxLoader();
-
-    var i, len, url;
-
-    // queue each sound for loading
-    for(i=0, len = soundNames.length; i < len; i++) {
-
-        // see if the browser can play m4a
-        url = 'sound/' + soundNames[i] + '.mp3';
-        if (!soundManager.canPlayURL(url)) {
-            // ok, what about ogg?
-            url = 'sound/' + soundNames[i] + '.aac';
-            if (!soundManager.canPlayURL(url)) {
-                continue; // can't be played
-            }
-        }
-
-        // queue the sound using the name as the SM2 id
-        loader.addSound(soundNames[i], url);
-    }
-
-    var imgHolder;
-    //queue each image for loading
-    for(var n=0, nmax = imgNames.length; n<nmax; n++){
-        imgHolder = new PxLoaderImage("img/"+ imgNames[n] + ".png");
-        imgHolder.name = imgNames[n];
-        loader.add(imgHolder);
-    }
-
-    // listen to load events
-    loader.addProgressListener(function(e) {
-
-        if(e.resource.sound){
-            var soundId = e.resource.sound.sID;
-            console.log("sound " + soundId + " loaded");
-            sound[soundId] = function(){
-                var id = soundId;
-                return {
-                    play : function(){
-                        soundManager.play(id, {
-                            onfinish: function() {
-                                //sound[soundId].play();
-                            }
-                        });
-                    }
-                }
-            }();
-        }
-        else if(e.resource.img){
-            var imgId = e.resource.name;
-            console.log("image " + e.resource.name + " loaded");
-            img[imgId] = e.resource.img;
-        }
-
-        //onloading(parseInt(e.completedCount * 100/e.totalCount, 10) );
-
-
-    });
-
-    // callback that will be run once images are ready
-    loader.addCompletionListener(function() {
-        callback && callback();
-    });
-
-    loader.start();
-
-}
-
-
 function initChess(){
-    initLoader(function(){
-        for(var i=0; i<9; i++){
-            chesses[i] = Chess.create();
-            chesses[i].setStyle("left", chesses[i].id % 3 * 101 + "px");
-            chesses[i].setStyle("top", parseInt(chesses[i].id / 3, 10) * 101 + "px");
-        }
-       
+    $$(document.body).pinchOut(function(a,b,c,d){
+        console.log("a:" + a + "\nb:" + b + "\nc:" + c + "\nd:" + d);
+
     })
+    for(var i=0; i<9; i++){
+        chesses[i] = Chess.create();
+        chesses[i].setStyle("left", chesses[i].id % 3 * 101 + "px");
+        chesses[i].setStyle("top", parseInt(chesses[i].id / 3, 10) * 101 + "px");
+    }
 }
 
 Board.addEventListener(clickEvent,function(e){
@@ -246,7 +116,6 @@ Board.addEventListener(clickEvent,function(e){
     if(!!SOCKET){
         SOCKET.emit('next', { type: sta.turn.value , coord : {x:_v1,y:_v2} });
     }
-
     putChess(sta.turn.value,{x:_v1,y:_v2});
 },false);
 
@@ -274,6 +143,8 @@ function comTurn(){
     _y = ~~_putsArray[num].split(',')[1];
     putChess(sta.turn.value,{x:_x,y:_y});
 }
+
+
 
 function putChess(type,coord){
     var array = sta.array;
@@ -516,9 +387,6 @@ function judgeWin(){
 }
 
 
-    
-soundManager.onready(function() {
-    initChess();
-});
 
+initChess();
 init();
