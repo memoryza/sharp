@@ -24,10 +24,7 @@ app.get('/applyKey',function(req,res){
 	res.send(key);
 });
 
-function _getKey(){
-	// var _number = ~~(Math.random() * 10000);
-	
-	
+function _getKey(){	
 	return key;
 }
 

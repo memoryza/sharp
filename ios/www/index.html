@@ -12,10 +12,27 @@
 
 </head>
 <body>
-<div class="board"></div>
-    <script type="text/javascript" src="cordova-2.5.0.js"></script>
-    <script type="text/javascript" src="js/quo.js"></script>
-    <script src="js/chess.js"></script>
-    <script type="text/javascript" src="js/sharp.js"></script>
+	<div class="board"></div>
+	<div class="option" id="option">
+		<button id="option_1">1 player</button>
+		<br/>
+		<button id="option_2">2 players</button>
+		<br/>
+		<button id="option_3">Invite a people!</button>
+	</div>
+
+	<script type="text/javascript" src="cordova-2.5.0.js"></script>
+	<script type="text/javascript" src="js/socket.io.js"></script>
+	<script type="text/javascript">
+		var socket = io.connect('http://localhost:9090');
+
+		socket.on('news', function (data) {
+		    console.log(data);
+		    socket.emit('my other event', { my: 'data' });
+		});
+	</script>
+	<script type="text/javascript" src="js/quo.js"></script>
+	<script src="js/chess.js"></script>
+	<script type="text/javascript" src="js/sharp.js"></script>
 </body>
 </html>

@@ -6,7 +6,10 @@ var  Board = doc.querySelector('.board');
 var chesses = [];
 var history = [];
 
-//游戏选项
+// 游戏选项
+// endLess 是不是无尽模式
+// roles
+//    type : 'people','computer','net-friend'
 var options = {
     endLess : false,
     roles : {
@@ -33,7 +36,36 @@ var sta = {
     array : [[null,null,null],[null,null,null],[null,null,null]]
 };
 
+
+//程序初始化
 function init(){
+    bindEvents();
+}
+
+function bindEvents(){
+    var _option = doc.getElementById('option');
+
+    var _startWithType = function(type){
+        _option.style.display = 'none';
+        options.roles.p2.type = type;
+        start();
+    }
+
+    doc.getElementById('option_1').addEventListener(clickEvent,function(){
+        _startWithType('computer');
+    },false);
+
+    doc.getElementById('option_2').addEventListener(clickEvent,function(){
+       _startWithType('people');
+    },false);
+
+    doc.getElementById('option_3').addEventListener(clickEvent,function(){
+        _startWithType('net-friend');
+    },false);
+}
+
+
+function start(){
     sta.step = 0;
     sta.array = [[null,null,null],[null,null,null],[null,null,null]];
     sta.offensive = sta.round % 2 == 0 ? options.roles.p1 : options.roles.p2;
@@ -47,6 +79,8 @@ function init(){
 
     render();
 }
+
+
 
 function initChess(){
     for(var i=0; i<9; i++){
@@ -289,7 +323,7 @@ function next(){
         //game over and start again!
         setTimeout(function(){
             sta.round++;
-            init();
+            // init();
         },500)
         return;
     }
