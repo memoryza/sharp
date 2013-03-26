@@ -7,18 +7,26 @@ var chesses = [];
 var history = [];
 var HOST = 'http://localhost:9090'
 
-var SOCKET;
+var SOCKET = io.connect( HOST + '/' + Board.getAttribute('_key'));
+
+console.log(Board.getAttribute('_key'));
+
+SOCKET.on('next',function(data){
+    console.log(data);
+    putChess(data.type,data.coord);
+    render();
+});
 
 
 // 游戏选项
 // endLess 是不是无尽模式
 // roles
-//    type : 'people','computer','net-friend'
+// type : 'people','computer','net-friend'
 var options = {
     endLess : false,
     roles : {
         p1 : {
-            type : 'people',
+            type : 'net-friend',
             name : 'p1',
             value : 'o'
         },
@@ -43,61 +51,9 @@ var sta = {
 
 //程序初始化
 function init(){
-    bindEvents();
+    start();
 }
 
-
-// var socket = io.connect('http://localhost');
-//   socket.on('news', function (data) {
-//     console.log(data);
-//     socket.emit('my other event', { my: 'data' });
-//   });
-
-function bindEvents(){
-    var _option = doc.getElementById('option');
-
-    var _startWithType = function(type){
-        _option.style.display = 'none';
-        options.roles.p2.type = type;
-
-        if(type == 'net-friend' && SOCKET == undefined){
-            var xhr = new XMLHttpRequest();
-            xhr.onreadystatechange = function(){
-                if(xhr.readyState === 4){
-                    var key = xhr.responseText;
-
-                    console.log(key)
-                    
-                    SOCKET = io.connect( HOST + '/' + key);
-
-                    SOCKET.on('next',function(data){
-                        console.log(data);
-                        putChess(data.type,data.coord);
-                        render();
-                    });
-
-                    start();
-                }
-            };
-            xhr.open('GET', HOST + '/applyKey');
-            xhr.send(null);  
-            return;          
-        }
-        start();
-    }
-
-    doc.getElementById('option_1').addEventListener(clickEvent,function(){
-        _startWithType('computer');
-    },false);
-
-    doc.getElementById('option_2').addEventListener(clickEvent,function(){
-       _startWithType('people');
-    },false);
-
-    doc.getElementById('option_3').addEventListener(clickEvent,function(){
-        _startWithType('net-friend');
-    },false);
-}
 
 //开局
 function start(){
@@ -160,7 +116,6 @@ Board.addEventListener(clickEvent,function(e){
     if(!!SOCKET){
         SOCKET.emit('next', { type: sta.turn.value , coord : {x:_v1,y:_v2} });
     }
-
     putChess(sta.turn.value,{x:_v1,y:_v2});
 },false);
 
@@ -188,6 +143,8 @@ function comTurn(){
     _y = ~~_putsArray[num].split(',')[1];
     putChess(sta.turn.value,{x:_x,y:_y});
 }
+
+
 
 function putChess(type,coord){
     var array = sta.array;
