@@ -14,6 +14,10 @@ function init(){
 }
 
 function initChess(){
+    $$(document.body).pinchOut(function(a,b,c,d){
+        console.log("a:" + a + "\nb:" + b + "\nc:" + c + "\nd:" + d);
+
+    })
     for(var i=0; i<9; i++){
         chesses[i] = Chess.create();
         chesses[i].setStyle("left", chesses[i].id % 3 * 101 + "px");
