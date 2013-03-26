@@ -7,7 +7,7 @@ var Chess = Chess || {};
     exports.first = null;      //the first Chess in the square
     exports.last = null;   //the last Chess in the square
     exports.chesses = [];
-    "setX setO setW shake".split(" ").forEach(function(name){
+    "setX setO setW shake rock stopRock".split(" ").forEach(function(name){
         exports[name] = function(){
             exports.chesses.forEach(function(chess){
                 chess[name]();
@@ -23,11 +23,11 @@ var Chess = Chess || {};
             id:null,
             elem:null,
             status:"w",
-            parent:$$(".board").get(0),
+            parent:$(".board").get(0),
             template:'<div class="chess"><div class="shadow animated"></div><div class="trig animated hinge"><div class="rotate animated"><div class="faceO face"></div><div class="faceX face"></div><div class="faceW face"></div></div></div></div>'
         };
-        $$.extend(def, param);
-        $$.extend(newChess, def);
+        $.extend(def, param);
+        $.extend(newChess, def);
         newChess.init();
         //record the first and the last one
         if(exports.count === 0){
@@ -45,31 +45,37 @@ var Chess = Chess || {};
     var chessFn = {
         init:function(){
             var that = this;
-            this.elem = $$(this.template).get(0);
-            this.shadowElem = $$(this.elem).find(".shadow").get(0);
+            this.elem = $(this.template).get(0);
+            this.shadowElem = $(this.elem).find(".shadow").get(0);
+            this.rotateElem = $(this.elem).find(".rotate").get(0);
 
-            $$(this.elem).on("webkitTransitionEnd", function(){
+            $(this.elem).on("webkitTransitionEnd", function(){
                 that._transitionend();
             })
             //animationend
-            $$(this.elem).on("webkitAnimationEnd", function(){
+            $(this.elem).on("webkitAnimationEnd", function(){
                 that._animationend();
             })
 
-            $$(this.parent).append(this.elem);
+            $(this.parent).append(this.elem);
         },
         setStyle:function(){
-            var __elem = $$(this.elem);
-            __elem.style.apply(__elem, arguments);
+            var __elem = $(this.elem);
+            __elem.css.apply(__elem, arguments);
         },
         clearAnim:function(){
-            $$(this.elem)
+            $(this.elem)
+            .removeClass("rockO")
+            .removeClass("rockX")
             .removeClass("o2w")
             .removeClass("o2x")
             .removeClass("x2w")
             .removeClass("x2o")
             .removeClass("w2x")
             .removeClass("w2o");
+
+            $(this.rotateElem)
+            .removeClass("infinite");
         },
         setX:function(){
             if(!(this.status === "x")){
@@ -77,12 +83,13 @@ var Chess = Chess || {};
                 this.clearAnim();
             }
             if(this.status === "w"){
-                $$(this.elem).addClass("w2x");
+                $(this.elem).addClass("w2x");
             }
             else if(this.status === "o"){
-                $$(this.elem).addClass("o2x");
+                $(this.elem).addClass("o2x");
             }
             this.status = "x";
+            this._setStaticClass();
         },
         setO:function(){
             if(!(this.status === "o")){
@@ -90,12 +97,13 @@ var Chess = Chess || {};
                 this.clearAnim();
             }
             if(this.status === "w"){
-                $$(this.elem).addClass("w2o");
+                $(this.elem).addClass("w2o");
             }
             else if(this.status === "x"){
-                $$(this.elem).addClass("x2o");
+                $(this.elem).addClass("x2o");
             }
             this.status = "o";
+            this._setStaticClass();
         },
         setW:function(){
             if(!(this.status === "w")){
@@ -103,32 +111,59 @@ var Chess = Chess || {};
                 this.clearAnim();
             }
             if(this.status === "x"){
-                $$(this.elem).addClass("x2w");
+                $(this.elem).addClass("x2w");
             }
             else if(this.status === "o"){
-                $$(this.elem).addClass("o2w");
+                $(this.elem).addClass("o2w");
             }
             this.status = "w";
+            this._setStaticClass();
+        },
+        rock:function(){
+            $(this.rotateElem).addClass("infinite");
+            if(this.status === "x"){
+                $(this.elem).addClass("rockX");
+            }
+            else if(this.status === "o"){
+                $(this.elem).addClass("rockO");
+            }
+        },
+        stopRock:function(){
+            $(this.rotateElem).removeClass("infinite");
+            $(this.elem).removeClass("rockX");
+            $(this.elem).removeClass("rockO");
         },
         shake:function(){
-            $$(this.elem).addClass("shake");
+            $(this.elem).addClass("shake");
+        },
+        _setStaticClass:function(){
+            $(this.elem).removeClass("x").removeClass("o");
+            if(this.status === "x"){
+                $(this.elem).addClass("x");
+            }
+            else if(this.status === "o"){
+                $(this.elem).addClass("o");
+            }
+
+            sound.cow && sound.cow.play();
         },
         _transitionend:function(){
-            if($$(this.elem).hasClass("showShadow")){
+            if($(this.elem).hasClass("showShadow")){
                 this.hideShadow();
             }
         },
         _animationend:function(){
-            $$(this.elem).removeClass("shake");
+            $(this.elem).removeClass("shake");
+            this.clearAnim();
         },
         showShadow:function(){
-            $$(this.elem).addClass("showShadow");
-            $$(this.shadowElem).addClass("flash");
+            $(this.elem).addClass("showShadow");
+            $(this.shadowElem).addClass("flash");
             this.setStyle("-webkit-transform", "translateZ(1000px)");
         },
         hideShadow:function(){
-            $$(this.elem).removeClass("showShadow");
-            $$(this.shadowElem).removeClass("flash");
+            $(this.elem).removeClass("showShadow");
+            $(this.shadowElem).removeClass("flash");
             this.setStyle("-webkit-transform", "translateZ(0px)");
         }
     }

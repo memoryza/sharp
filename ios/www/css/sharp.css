@@ -19,6 +19,16 @@ body{
 	     -o-animation-duration: 1s;
 	        animation-duration: 1s;
 }
+.animated.infinite {
+	-webkit-animation-iteration-count: infinite;
+	-moz-animation-iteration-count: infinite;
+	-o-animation-iteration-count: infinite;
+	animation-iteration-count: infinite;
+	-webkit-animation-duration: 1s;
+	   -moz-animation-duration: 1s;
+	     -o-animation-duration: 1s;
+	        animation-duration: 1s;
+}
 
 .board{
 	width: 310px;
@@ -161,6 +171,16 @@ body{
 	10%, 30%, 50%, 70%, 90% {-webkit-transform:translateZ(-28.8675px) rotateZ(5deg);}
 	20%, 40%, 60%, 80% {-webkit-transform:translateZ(-28.8675px) rotateZ(-5deg);}
 }
+@-webkit-keyframes rockX {
+	0%{-webkit-transform:rotateY(115deg);}
+	50%{-webkit-transform:rotateY(125deg);}
+	100%{-webkit-transform:rotateY(115deg);}
+}
+@-webkit-keyframes rockO {
+	0%{-webkit-transform:rotateY(-125deg);}
+	50%{-webkit-transform:rotateY(-115deg);}
+	100%{-webkit-transform:rotateY(-125deg);}
+}
 
 /** anim frame-------------> **/
 
@@ -238,12 +258,35 @@ body{
 	animation-name: w2o;
 }
 
+.board .chess.rockX .rotate{
+	-webkit-animation-name: rockX;
+	-moz-animation-name: rockX;
+	-o-animation-name: rockX;
+	animation-name: rockX;
+}
+
+.board .chess.rockO .rotate{
+	-webkit-animation-name: rockO;
+	-moz-animation-name: rockO;
+	-o-animation-name: rockO;
+	animation-name: rockO;
+}
+
 .board .chess.shake .trig{
 	-webkit-animation-name: shake;
 	-moz-animation-name: shake;
 	-o-animation-name: shake;
 	animation-name: shake;
 }
+.board .o .rotate{
+	-webkit-transform:rotateY(-120deg);
+}
+
+.board .x .rotate{
+	-webkit-transform:rotateY(120deg);
+}
+
+
 
 .board .chess .face{
 	top: 0px;

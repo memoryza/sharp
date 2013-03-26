@@ -9,6 +9,20 @@ var HOST = 'http://localhost:9090'
 
 var SOCKET;
 
+var img = [],
+    imgNames = [
+        "sprite"
+    ],
+    sound = [],
+    soundNames = [
+        'cow'
+    ];
+
+//go with HTML5 audio
+soundManager.useHTML5Audio = true;
+soundManager.preferFlash = false;
+//soundManager.reboot();
+
 
 // 游戏选项
 // endLess 是不是无尽模式
@@ -118,16 +132,88 @@ function start(){
 }
 
 
-function initChess(){
-    $$(document.body).pinchOut(function(a,b,c,d){
-        console.log("a:" + a + "\nb:" + b + "\nc:" + c + "\nd:" + d);
+//init loading images&sounds
+function initLoader(callback){
 
-    })
-    for(var i=0; i<9; i++){
-        chesses[i] = Chess.create();
-        chesses[i].setStyle("left", chesses[i].id % 3 * 101 + "px");
-        chesses[i].setStyle("top", parseInt(chesses[i].id / 3, 10) * 101 + "px");
+
+    var loader = new PxLoader();
+
+    var i, len, url;
+
+    // queue each sound for loading
+    for(i=0, len = soundNames.length; i < len; i++) {
+
+        // see if the browser can play m4a
+        url = 'sound/' + soundNames[i] + '.mp3';
+        if (!soundManager.canPlayURL(url)) {
+            // ok, what about ogg?
+            url = 'sound/' + soundNames[i] + '.aac';
+            if (!soundManager.canPlayURL(url)) {
+                continue; // can't be played
+            }
+        }
+
+        // queue the sound using the name as the SM2 id
+        loader.addSound(soundNames[i], url);
     }
+
+    var imgHolder;
+    //queue each image for loading
+    for(var n=0, nmax = imgNames.length; n<nmax; n++){
+        imgHolder = new PxLoaderImage("img/"+ imgNames[n] + ".png");
+        imgHolder.name = imgNames[n];
+        loader.add(imgHolder);
+    }
+
+    // listen to load events
+    loader.addProgressListener(function(e) {
+
+        if(e.resource.sound){
+            var soundId = e.resource.sound.sID;
+            console.log("sound " + soundId + " loaded");
+            sound[soundId] = function(){
+                var id = soundId;
+                return {
+                    play : function(){
+                        soundManager.play(id, {
+                            onfinish: function() {
+                                //sound[soundId].play();
+                            }
+                        });
+                    }
+                }
+            }();
+        }
+        else if(e.resource.img){
+            var imgId = e.resource.name;
+            console.log("image " + e.resource.name + " loaded");
+            img[imgId] = e.resource.img;
+        }
+
+        //onloading(parseInt(e.completedCount * 100/e.totalCount, 10) );
+
+
+    });
+
+    // callback that will be run once images are ready
+    loader.addCompletionListener(function() {
+        callback && callback();
+    });
+
+    loader.start();
+
+}
+
+
+function initChess(){
+    initLoader(function(){
+        for(var i=0; i<9; i++){
+            chesses[i] = Chess.create();
+            chesses[i].setStyle("left", chesses[i].id % 3 * 101 + "px");
+            chesses[i].setStyle("top", parseInt(chesses[i].id / 3, 10) * 101 + "px");
+        }
+       
+    })
 }
 
 Board.addEventListener(clickEvent,function(e){
@@ -434,6 +520,9 @@ function judgeWin(){
 }
 
 
+    
+soundManager.onready(function() {
+    initChess();
+});
 
-initChess();
 init();
