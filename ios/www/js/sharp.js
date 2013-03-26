@@ -105,10 +105,6 @@ function comTurn(){
         }
     }
 
-    console.clear();
-    console.log(_puts[0]);
-    console.log(_puts[1]);
-    console.log(_puts[2]);
 
     var num = Math.floor(Math.random()*_putsArray.length);
     var _x = ~~_putsArray[num].split(',')[0],
