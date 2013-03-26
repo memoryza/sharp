@@ -4,14 +4,119 @@ var clickEvent =  'ontouchstart' in window ? 'touchend' : 'click';
 
 var  Board = doc.querySelector('.board');
 var chesses = [];
+var history = [];
+var HOST = 'http://localhost:9090'
 
-var array,step,turn;
+var SOCKET;
+
+
+// 游戏选项
+// endLess 是不是无尽模式
+// roles
+//    type : 'people','computer','net-friend'
+var options = {
+    endLess : false,
+    roles : {
+        p1 : {
+            type : 'people',
+            name : 'p1',
+            value : 'o'
+        },
+        p2 : {
+            type : 'people',
+            name : 'p2',
+            value : 'x'
+        }
+    }
+};
+
+//棋盘的状态
+var sta = {
+    step : 0,
+    round : 0,
+    history : [],
+    turn : options.roles.p1,
+    offensive : options.roles.p1,
+    array : [[null,null,null],[null,null,null],[null,null,null]]
+};
+
+
+//程序初始化
 function init(){
-    array = [[null,null,null],[null,null,null],[null,null,null]];
-    step = 0;
-    render();
-    turn = 'human';
+    bindEvents();
 }
+
+
+// var socket = io.connect('http://localhost');
+//   socket.on('news', function (data) {
+//     console.log(data);
+//     socket.emit('my other event', { my: 'data' });
+//   });
+
+function bindEvents(){
+    var _option = doc.getElementById('option');
+
+    var _startWithType = function(type){
+        _option.style.display = 'none';
+        options.roles.p2.type = type;
+
+        if(type == 'net-friend' && SOCKET == undefined){
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function(){
+                if(xhr.readyState === 4){
+                    
+                    SOCKET = io.connect( HOST + '/' + xhr.responseText);
+
+                    SOCKET.on('next',function(data){
+                        putChess(data.type,data.coord);
+                        render();
+                    });
+
+                    SOCKET.on('news', function (data) {
+                        console.log(data);
+                        SOCKET.emit('my other event', { my: 'data' });
+                    });
+
+                    start();
+                }
+            };
+            xhr.open('GET', HOST + '/applyKey');
+            xhr.send(null);  
+            return;          
+        }
+        start();
+    }
+
+    doc.getElementById('option_1').addEventListener(clickEvent,function(){
+        _startWithType('computer');
+    },false);
+
+    doc.getElementById('option_2').addEventListener(clickEvent,function(){
+       _startWithType('people');
+    },false);
+
+    doc.getElementById('option_3').addEventListener(clickEvent,function(){
+        _startWithType('net-friend');
+    },false);
+}
+
+//开局
+function start(){
+    sta.step = 0;
+    sta.array = [[null,null,null],[null,null,null],[null,null,null]];
+    sta.offensive = sta.round % 2 == 0 ? options.roles.p1 : options.roles.p2;
+    sta.turn = sta.offensive;
+
+    if(sta.turn.type == 'people'){
+        console.log('wait for start!');
+    }else if(sta.turn.type == 'computer'){
+        comTurn();
+    }else if(sta.turn.type == 'net-friend'){
+        console.log('wait your net net-friend');
+    }
+    render();
+}
+
 
 function initChess(){
     $$(document.body).pinchOut(function(a,b,c,d){
@@ -25,18 +130,12 @@ function initChess(){
     }
 }
 
-
-
-
 Board.addEventListener(clickEvent,function(e){
- if(turn !== 'human'){return false;}
+
+    if(sta.turn.type !== 'people'){return false;}
+    var array = sta.array;
 
     var _target = e.target;
-
-    // if(_target.classList.contains(''))
-
-
-
     var x,y;
     e = e.changedTouches ? e.changedTouches[0] : e;
     if (e.pageX || e.pageY) { 
@@ -49,8 +148,6 @@ Board.addEventListener(clickEvent,function(e){
     x -= Board.offsetLeft;
     y -= Board.offsetTop;
 
-    console.log(x + ',' + y);
-
     var w,h;
     w = Board.clientWidth;
     h = Board.clientHeight;
@@ -59,16 +156,21 @@ Board.addEventListener(clickEvent,function(e){
     var _v2 = ~~(x/w*3);
 
     if(!array[_v1]){return false;}
-    if(array[_v1][_v2] !== null){return false;}
-    array[_v1][_v2] = 'you';
-    next();
+    if(array[_v1][_v2] !== null){chesses[_v1*3 + _v2].shake(); return false;}
+
+    putChess(sta.turn.value,{x:_v1,y:_v2});
+
+    if(!!SOCKET){
+        SOCKET.emit('next', { type: sta.turn.value , coord : {x:_v1,y:_v2} });
+    }
+
 },false);
 
 function comTurn(){
-	if(turn !== 'computer'){return false;}
+	if(sta.turn.type !== 'computer'){return false;}
     var _max = 0;
     var _putsArray = [];
-    var _puts = findPuts();
+    var _puts = findPuts(sta.turn.value);
 
     for(var i=0;i<_puts.length;i++){
         for(var j=0;j<_puts.length;j++){
@@ -82,14 +184,21 @@ function comTurn(){
         }
     }
 
-    var num = Math.floor(Math.random()*_putsArray.length);
 
+    var num = Math.floor(Math.random()*_putsArray.length);
     var _x = ~~_putsArray[num].split(',')[0],
     _y = ~~_putsArray[num].split(',')[1];
-    array[_x][_y] = 'com';
-    next();
+    putChess(sta.turn.value,{x:_x,y:_y});
 }
 
+
+
+function putChess(type,coord){
+    var array = sta.array;
+    array[coord.x][coord.y] = type;
+    next();
+    history.push(coord);
+}
 
 
 //每个格都有权重分配
@@ -98,16 +207,19 @@ function comTurn(){
 //能为自己连成2个点并且可以获胜 权重 ＋3
 //有获胜希望的 权重 ＋1
 //能够阻止对方连成2个点 并有获胜希望的 权重 ＋2
-function findPuts(){
+function findPuts(value){
+    var array = sta.array;
+    var _v = value ;  
     var wight_array = [[0,0,0],[0,0,0],[0,0,0]];
     for(var i=0;i<array.length;i++){
         for(var j=0;j<array.length;j++){
             if(array[i][j] !== null ){continue;}
-
             var x1 = array[i][(j+1)%3],x2 = array[i][(j+2)%3],
             y1 = array[(i+1)%3][j],y2 = array[(i+2)%3][j],
             o1,o2,o3,o4;
             o1 = o2 = o3 = o4 = undefined;
+
+            wight_array[i][j]+=1;
 
             if(i == 0 && j == 0){
                 o1 = array[1][1];
@@ -137,25 +249,23 @@ function findPuts(){
             }
 
             if(x1==x2 && x1 !== null){
-                if(x1=='com'){
+                if(x1==_v){
                     wight_array[i][j] += 40;
                 }else{
                     wight_array[i][j] += 18;
-                    // console.log(i + ',' + j);
                 }
             }
 
             if(y1 == y2 && y1 !== null){
-                if(y1 == 'com'){
+                if(y1 == _v){
                     wight_array[i][j] += 40;
                 }else{
                     wight_array[i][j] += 18;
-                    // console.log(i + ',' + j);
                 }
             }
 
             if( (x1 !== null && x2 == null) || (x1 == null && x2 !== null) ){
-                if(x1 == 'com' || x2 == 'com'){
+                if(x1 == _v || x2 == _v){
                     wight_array[i][j] += 3;
                 }else{
                     wight_array[i][j] += 2;
@@ -163,7 +273,7 @@ function findPuts(){
             }
 
             if( (y1 !== null && y2 == null) || (y1 == null && y2 !== null) ){
-                if(x1 == 'com' || x2 == 'com'){
+                if(x1 == _v || x2 == _v){
                     wight_array[i][j] += 3;
                 }else{
                     wight_array[i][j] += 2;
@@ -180,15 +290,14 @@ function findPuts(){
 
             if(o1 !== undefined){
                 if(o1 == o2 && o1 !== null){
-                    if(o1=='com'){
+                    if(o1==_v){
                         wight_array[i][j] += 40;
                     }else{
                         wight_array[i][j] += 18;
-                        // console.log(i + ',' + j);
                     }
                 }
                 if( (o1 !== null && o2 == null) || (o1 == null && o2 !== null) ){
-                    if(o1 == 'com' || o2 == 'com'){
+                    if(o1 == _v || o2 == _v){
                         wight_array[i][j] += 3;
                     }else{
                         wight_array[i][j] += 2;
@@ -201,14 +310,14 @@ function findPuts(){
 
             if(o3 !== undefined){
                 if(o3 == o4 && o3 !== null){
-                    if(o3=='com'){
+                    if(o3==_v){
                         wight_array[i][j] += 40;
                     }else{
                         wight_array[i][j] += 18;
                     }
                 }
                 if( (o3 !== null && o4 == null) || (o3 == null && o4 !== null) ){
-                    if(o3 == 'com' || o4 == 'com'){
+                    if(o3 == _v || o4 == _v){
                         wight_array[i][j] += 3;
                     }else{
                         wight_array[i][j] += 2;
@@ -221,21 +330,18 @@ function findPuts(){
 
         }
     }
-
-    // console.log('=============')
-    // console.log(wight_array[0]);
-    // console.log(wight_array[1]);
-    // console.log(wight_array[2]);
-
     return wight_array;
 }
 
+
+
 function render(){
-    for(var i=0;i<array.length;i++){
-        for(var j=0;j<array[i].length;j++){
+
+    for(var i=0;i<sta.array.length;i++){
+        for(var j=0;j<sta.array[i].length;j++){
             var _chess = chesses[i*3 + j];
-            if(array[i][j] !== null ){
-                if(array[i][j] == 'you'){
+            if(sta.array[i][j] !== null ){
+                if(sta.array[i][j] == 'o'){
                     _chess.setO();
             	}else{
                     _chess.setX();
@@ -249,27 +355,40 @@ function render(){
 }
 
 function next(){
-	render();
-    step++;
+    //当步骤为8的时候 移除一个。
+    // if(step >= 8){
+    //     var _coord = history[step-8];
+    //     array[_coord.x][_coord.y] = null;
+    // }
+    sta.step++;
+
+    render();
     var finish = judgeWin();
     if(!!finish){
-    	init();
-    	return;
+        //game over and start again!
+        setTimeout(function(){
+            sta.round++;
+            // init();
+        },500)
+        return;
     }
-    if(turn == 'human'){
-        turn = 'computer';
-        comTurn();
-    }else{
-        turn = 'human';
-        console.log('wait for human!');
+
+    sta.turn = sta.turn == options.roles.p1 ?  options.roles.p2 :  options.roles.p1;
+
+    if(sta.turn.type == 'computer'){
+        setTimeout(function(){
+             comTurn();
+        },500);
     }
+
 }
 
 function judgeWin(){
-	if(step < 4){return;}
+	if(sta.step < 4){return;}
 	var winner;
 	var hasWiner = false;
 	var finished = false;
+    var array = sta.array;
 
     for(var i=0;i<array.length;i++){
         for(var j=0;j<array[i].length;j++){
@@ -299,9 +418,9 @@ function judgeWin(){
         hasWiner = true;
     }
 
-    if((step >= 9 && !hasWiner) || hasWiner ){
+    if(sta.step >=9 || hasWiner ){
     	if(!!winner){
-            if(winner == 'you'){
+            if(winner == 'o'){
                 //document.getElementById('info').innerHTML = '你赢了:)';
             }else{
                 //document.getElementById('info').innerHTML = '你输了:(';
@@ -313,149 +432,6 @@ function judgeWin(){
     }
     return finished;
 }
-
-
-//
-doc.querySelector('.board').addEventListener('touchend',function(){});
-
-
-
-//<----------------- Chess class
-var Chess = Chess || {};
-(function(exports){
-
-    exports.count = 0;
-    exports.first = null;      //the first Chess in the square
-    exports.last = null;   //the last Chess in the square
-    exports.chesses = [];
-    "setX setO setW shake".split(" ").forEach(function(name){
-        exports[name] = function(){
-            exports.chesses.forEach(function(chess){
-                chess[name]();
-            })
-        }
-    })
-
-
-
-    exports.create = function(param){
-        var newChess = Object.create(chessFn);
-        var def = {
-            id:null,
-            elem:null,
-            status:"w",
-            parent:$$(".board").get(0),
-            template:'<div class="chess"><div class="shadow animated"></div><div class="trig animated hinge"><div class="rotate animated"><div class="faceO face"></div><div class="faceX face"></div><div class="faceW face"></div></div></div></div>'
-        };
-        $$.extend(def, param);
-        $$.extend(newChess, def);
-        newChess.init();
-        //record the first and the last one
-        if(exports.count === 0){
-            exports.first = newChess;
-        }
-        else{
-            exports.last = newChess;
-        }
-        exports.chesses.push(newChess);
-        newChess.id = exports.count;
-        exports.count++;
-        return newChess;
-    }
-
-    var chessFn = {
-        init:function(){
-            var that = this;
-            this.elem = $$(this.template).get(0);
-            this.shadowElem = $$(this.elem).find(".shadow").get(0);
-
-            $$(this.elem).on("webkitTransitionEnd", function(){
-                that._transitionend();
-            })
-            //animationend
-            $$(this.elem).on("webkitAnimationEnd", function(){
-                that._animationend();
-            })
-
-            $$(this.parent).append(this.elem);
-        },
-        setStyle:function(){
-            var __elem = $$(this.elem);
-            __elem.style.apply(__elem, arguments);
-        },
-        clearAnim:function(){
-            $$(this.elem)
-            .removeClass("o2w")
-            .removeClass("o2x")
-            .removeClass("x2w")
-            .removeClass("x2o")
-            .removeClass("w2x")
-            .removeClass("w2o");
-        },
-        setX:function(){
-            if(!(this.status === "x")){
-                this.showShadow();
-                this.clearAnim();
-            }
-            if(this.status === "w"){
-                $$(this.elem).addClass("w2x");
-            }
-            else if(this.status === "o"){
-                $$(this.elem).addClass("o2x");
-            }
-            this.status = "x";
-        },
-        setO:function(){
-            if(!(this.status === "o")){
-                this.showShadow();
-                this.clearAnim();
-            }
-            if(this.status === "w"){
-                $$(this.elem).addClass("w2o");
-            }
-            else if(this.status === "x"){
-                $$(this.elem).addClass("x2o");
-            }
-            this.status = "o";
-        },
-        setW:function(){
-            if(!(this.status === "w")){
-                this.showShadow();
-                this.clearAnim();
-            }
-            if(this.status === "x"){
-                $$(this.elem).addClass("x2w");
-            }
-            else if(this.status === "o"){
-                $$(this.elem).addClass("o2w");
-            }
-            this.status = "w";
-        },
-        shake:function(){
-            $$(this.elem).addClass("shake");
-        },
-        _transitionend:function(){
-            if($$(this.elem).hasClass("showShadow")){
-                this.hideShadow();
-            }
-        },
-        _animationend:function(){
-            $$(this.elem).removeClass("shake");
-        },
-        showShadow:function(){
-            $$(this.elem).addClass("showShadow");
-            $$(this.shadowElem).addClass("flash");
-            this.setStyle("-webkit-transform", "translateZ(1000px)");
-        },
-        hideShadow:function(){
-            $$(this.elem).removeClass("showShadow");
-            $$(this.shadowElem).removeClass("flash");
-            this.setStyle("-webkit-transform", "translateZ(0px)");
-        }
-    }
-
-})(Chess)
-//cube class------------------->
 
 
 
