@@ -5,6 +5,10 @@ var clickEvent =  'ontouchstart' in window ? 'touchend' : 'click';
 var  Board = doc.querySelector('.board');
 var chesses = [];
 var history = [];
+var HOST = 'http://localhost:9090'
+
+var SOCKET;
+
 
 // 游戏选项
 // endLess 是不是无尽模式
@@ -42,12 +46,44 @@ function init(){
     bindEvents();
 }
 
+
+// var socket = io.connect('http://localhost');
+//   socket.on('news', function (data) {
+//     console.log(data);
+//     socket.emit('my other event', { my: 'data' });
+//   });
+
 function bindEvents(){
     var _option = doc.getElementById('option');
 
     var _startWithType = function(type){
         _option.style.display = 'none';
         options.roles.p2.type = type;
+
+        if(type == 'net-friend' && SOCKET == undefined){
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function(){
+                if(xhr.readyState === 4){
+                    
+                    SOCKET = io.connect( HOST + '/' + xhr.responseText);
+
+                    SOCKET.on('next',function(data){
+                        putChess(data.type,data.coord);
+                        render();
+                    });
+
+                    SOCKET.on('news', function (data) {
+                        console.log(data);
+                        SOCKET.emit('my other event', { my: 'data' });
+                    });
+
+                    start();
+                }
+            };
+            xhr.open('GET', HOST + '/applyKey');
+            xhr.send(null);  
+            return;          
+        }
         start();
     }
 
@@ -64,7 +100,7 @@ function bindEvents(){
     },false);
 }
 
-
+//开局
 function start(){
     sta.step = 0;
     sta.array = [[null,null,null],[null,null,null],[null,null,null]];
@@ -75,11 +111,11 @@ function start(){
         console.log('wait for start!');
     }else if(sta.turn.type == 'computer'){
         comTurn();
+    }else if(sta.turn.type == 'net-friend'){
+        console.log('wait your net net-friend');
     }
-
     render();
 }
-
 
 
 function initChess(){
@@ -118,7 +154,12 @@ Board.addEventListener(clickEvent,function(e){
     if(!array[_v1]){return false;}
     if(array[_v1][_v2] !== null){chesses[_v1*3 + _v2].shake(); return false;}
 
-    putChess(sta.turn.value,{x:_v1,y:_v2})
+    putChess(sta.turn.value,{x:_v1,y:_v2});
+
+    if(!!SOCKET){
+        SOCKET.emit('next', { type: sta.turn.value , coord : {x:_v1,y:_v2} });
+    }
+
 },false);
 
 function comTurn(){
