@@ -300,12 +300,12 @@ body{
 	-webkit-transform: translateZ(28.8675px);
 }
 .board .chess .faceO{
-	background-image: url(/img/sprite.png);
+	background-image: url(../img/sprite.png);
 	background-color: #FA8181;
 	-webkit-transform: translateX(25px) translateZ(-14.4338px) rotateY(120deg);
 }
 .board .chess .faceX{
-	background-image: url(/img/sprite.png);
+	background-image: url(../img/sprite.png);
 	background-position:  -100px 0px;
 	background-color:  #74C3FF;
 	-webkit-transform: translateX(-25px) translateZ(-14.4338px) rotateY(240deg);
