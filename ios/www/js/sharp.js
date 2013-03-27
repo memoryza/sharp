@@ -272,7 +272,6 @@ function putChess(type,coord){
 //每个格都有权重分配
 //查找自己能够获胜的点 权重分配为 ＋40
 //查找对方能够获胜的点 权重分配为 ＋18
-
 function findPuts(value){
     var array = sta.array;
     var _v = value ;  
@@ -388,7 +387,7 @@ function next(){
         //game over and start again!
         setTimeout(function(){
             sta.round++;
-            // init();
+            start();
         },500)
         return;
     }
