@@ -21,11 +21,9 @@ var img = [],
 //go with HTML5 audio
 soundManager.useHTML5Audio = true;
 soundManager.preferFlash = false;
-//soundManager.reboot();
-
 
 // 游戏选项
-// endLess 是不是无尽模式
+// endLess : 是不是无尽模式
 // roles
 //    type : 'people','computer','net-friend'
 var options = {
@@ -59,13 +57,6 @@ var sta = {
 function init(){
     bindEvents();
 }
-
-
-// var socket = io.connect('http://localhost');
-//   socket.on('news', function (data) {
-//     console.log(data);
-//     socket.emit('my other event', { my: 'data' });
-//   });
 
 function bindEvents(){
     var _option = doc.getElementById('option');
@@ -166,7 +157,6 @@ function initLoader(callback){
 
     // listen to load events
     loader.addProgressListener(function(e) {
-
         if(e.resource.sound){
             var soundId = e.resource.sound.sID;
             console.log("sound " + soundId + " loaded");
@@ -188,10 +178,6 @@ function initLoader(callback){
             console.log("image " + e.resource.name + " loaded");
             img[imgId] = e.resource.img;
         }
-
-        //onloading(parseInt(e.completedCount * 100/e.totalCount, 10) );
-
-
     });
 
     // callback that will be run once images are ready
@@ -286,9 +272,7 @@ function putChess(type,coord){
 //每个格都有权重分配
 //查找自己能够获胜的点 权重分配为 ＋40
 //查找对方能够获胜的点 权重分配为 ＋18
-//能为自己连成2个点并且可以获胜 权重 ＋3
-//有获胜希望的 权重 ＋1
-//能够阻止对方连成2个点 并有获胜希望的 权重 ＋2
+
 function findPuts(value){
     var array = sta.array;
     var _v = value ;  
@@ -346,30 +330,6 @@ function findPuts(value){
                 }
             }
 
-            if( (x1 !== null && x2 == null) || (x1 == null && x2 !== null) ){
-                if(x1 == _v || x2 == _v){
-                    wight_array[i][j] += 3;
-                }else{
-                    wight_array[i][j] += 2;
-                }
-            }
-
-            if( (y1 !== null && y2 == null) || (y1 == null && y2 !== null) ){
-                if(x1 == _v || x2 == _v){
-                    wight_array[i][j] += 3;
-                }else{
-                    wight_array[i][j] += 2;
-                }
-            }
-
-            if( x1 == null && x2 == null ){
-                wight_array[i][j] += 1;
-            }
-
-            if( y1 == null && y2 == null ){
-                wight_array[i][j] += 1;
-            }
-
             if(o1 !== undefined){
                 if(o1 == o2 && o1 !== null){
                     if(o1==_v){
@@ -377,16 +337,6 @@ function findPuts(value){
                     }else{
                         wight_array[i][j] += 18;
                     }
-                }
-                if( (o1 !== null && o2 == null) || (o1 == null && o2 !== null) ){
-                    if(o1 == _v || o2 == _v){
-                        wight_array[i][j] += 3;
-                    }else{
-                        wight_array[i][j] += 2;
-                    }
-                }
-                if( o1 == null && o2 == null ){
-                    wight_array[i][j] += 1;
                 }
             }
 
@@ -398,24 +348,12 @@ function findPuts(value){
                         wight_array[i][j] += 18;
                     }
                 }
-                if( (o3 !== null && o4 == null) || (o3 == null && o4 !== null) ){
-                    if(o3 == _v || o4 == _v){
-                        wight_array[i][j] += 3;
-                    }else{
-                        wight_array[i][j] += 2;
-                    }
-                }
-                if( o3 == null && o4 == null ){
-                    wight_array[i][j] += 1;
-                }
             }
 
         }
     }
     return wight_array;
 }
-
-
 
 function render(){
 
@@ -503,20 +441,15 @@ function judgeWin(){
     if(sta.step >=9 || hasWiner ){
     	if(!!winner){
             if(winner == 'o'){
-                //document.getElementById('info').innerHTML = '你赢了:)';
             }else{
-                //document.getElementById('info').innerHTML = '你输了:(';
             }
     	}else{
-            //document.getElementById('info').innerHTML = '平局!';
     	}
     	finished = true;
     }
     return finished;
 }
 
-
-    
 soundManager.onready(function() {
     initChess();
 });
