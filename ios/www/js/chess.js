@@ -137,15 +137,18 @@ var Chess = Chess || {};
             $(this.elem).addClass("shake");
         },
         _setStaticClass:function(){
-            $(this.elem).removeClass("x").removeClass("o");
-            if(this.status === "x"){
-                $(this.elem).addClass("x");
-            }
-            else if(this.status === "o"){
-                $(this.elem).addClass("o");
-            }
-
+            var that = this;
+            setTimeout(function(){
+                $(that.elem).removeClass("x").removeClass("o");
+                if(that.status === "x"){
+                    $(that.elem).addClass("x");
+                }
+                else if(that.status === "o"){
+                    $(that.elem).addClass("o");
+                }
+            }, 0);
             sound.cow && sound.cow.play();
+
         },
         _transitionend:function(){
             if($(this.elem).hasClass("showShadow")){
