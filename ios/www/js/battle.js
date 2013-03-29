@@ -163,8 +163,8 @@ function initChess(){
     initLoader(function(){
         for(var i=0; i<9; i++){
             chesses[i] = Chess.create();
-            chesses[i].setStyle("left", chesses[i].id % 3 * 101 + "px");
-            chesses[i].setStyle("top", parseInt(chesses[i].id / 3, 10) * 101 + "px");
+            chesses[i].setStyle("left", chesses[i].id % 3 * 214 + "px");
+            chesses[i].setStyle("top", parseInt(chesses[i].id / 3, 10) * 214 + "px");
         }
        
     })

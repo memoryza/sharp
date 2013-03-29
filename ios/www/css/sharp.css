@@ -1,5 +1,6 @@
 body{
-	background: #e8e8e8;
+	background: #ffffff;
+	margin:0;
 	-webkit-backface-visibility: hidden;
 }
 .animated {
@@ -31,9 +32,10 @@ body{
 }
 
 .board{
-	width: 310px;
-	height: 300px;
+	width: 640px;
+	height: 700px;
 	position: relative;
+	overflow: hidden;
 	line-height: 0px;
 	-webkit-transform-style: preserve-3d;
 	-webkit-perspective: 99999999px;
@@ -167,9 +169,9 @@ body{
 	}
 }
 @-webkit-keyframes shake {
-	0%, 100% {-webkit-transform:translateZ(-28.8675px) rotateZ(0);}
-	10%, 30%, 50%, 70%, 90% {-webkit-transform:translateZ(-28.8675px) rotateZ(5deg);}
-	20%, 40%, 60%, 80% {-webkit-transform:translateZ(-28.8675px) rotateZ(-5deg);}
+	0%, 100% {-webkit-transform:translateZ(-57.735px) rotateZ(0);}
+	10%, 30%, 50%, 70%, 90% {-webkit-transform:translateZ(-57.735px) rotateZ(5deg);}
+	20%, 40%, 60%, 80% {-webkit-transform:translateZ(-57.735px) rotateZ(-5deg);}
 }
 @-webkit-keyframes rockX {
 	0%{-webkit-transform:rotateY(115deg);}
@@ -192,9 +194,9 @@ body{
 .board .chess{
 	display: inline-block;
 	position: absolute;
-	margin: 1px;
-	width: 100px;
-	height: 100px;
+	margin: 0px;
+	width: 214px;
+	height: 214px;
 	-webkit-perspective: 1000px;
 	-webkit-transform-style: preserve-3d;
 	-webkit-perspective-origin: center center;
@@ -207,7 +209,7 @@ body{
 	left: 0px;
 	width: 100%;
 	height: 100%;
-	-webkit-transform: translateZ(-28.8675px);
+	-webkit-transform: translateZ(-57.735px);
 	-webkit-transform-style: preserve-3d;
 	
 }
@@ -295,20 +297,25 @@ body{
 	height: 100%;
 	position: absolute;
 	-webkit-backface-visibility: hidden;
-	background-size: 200px 200px;
+	background-size: 428px 428px;
 	background-color: #fff;
-	-webkit-transform: translateZ(28.8675px);
+	-webkit-transform: translateZ(57.735px);
 }
 .board .chess .faceO{
 	background-image: url(../img/sprite.png);
 	background-color: #FA8181;
-	-webkit-transform: translateX(25px) translateZ(-14.4338px) rotateY(120deg);
+	-webkit-transform: translateX(50px) translateZ(-28.8676px) rotateY(120deg);
 }
 .board .chess .faceX{
 	background-image: url(../img/sprite.png);
-	background-position:  -100px 0px;
+	background-position:  -214px 0px;
 	background-color:  #74C3FF;
-	-webkit-transform: translateX(-25px) translateZ(-14.4338px) rotateY(240deg);
+	-webkit-transform: translateX(-50px) translateZ(-28.8676px) rotateY(240deg);
+}
+.board .chess .faceW{
+	background-image: url(../img/sprite.png);
+	background-position:  0px -214px;
+	background-color:  #ffffff;
 }
 .board .shadow{
 	opacity: 0;
@@ -317,8 +324,8 @@ body{
 	height: 100%;
 	top:0px;
 	left:0px;
-	box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.7);
-	-webkit-transform: scaleX(0.7) scaleY(0.9) translateZ(-80px);
+	box-shadow: 0px 0px 60px rgba(0, 0, 0, 0.7);
+	-webkit-transform: scaleX(0.7) scaleY(0.9) translateZ(-160px);
 	-webkit-transform-style: preserve-3d;
 }
 .flash {
