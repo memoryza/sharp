@@ -18,6 +18,8 @@ var img = [],
         'cow'
     ];
 
+
+
 //go with HTML5 audio
 soundManager.useHTML5Audio = true;
 soundManager.preferFlash = false;
@@ -41,6 +43,7 @@ var options = {
         }
     }
 };
+
 
 //棋盘的状态
 var sta = {
