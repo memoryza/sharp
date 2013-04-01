@@ -378,10 +378,10 @@ function render(){
 
 function next(){
     //当步骤为8的时候 移除一个。
-    // if(step >= 8){
-    //     var _coord = history[step-8];
-    //     array[_coord.x][_coord.y] = null;
-    // }
+    if(sta.step >= 8){
+        var _coord = sta.history[sta.step-8];
+        sta.array[_coord.x][_coord.y] = null;
+    }
     sta.step++;
 
     render();

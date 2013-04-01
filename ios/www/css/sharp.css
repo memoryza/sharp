@@ -33,7 +33,7 @@ body{
 
 .board{
 	width: 640px;
-	height: 700px;
+	height: 640px;
 	position: relative;
 	overflow: hidden;
 	line-height: 0px;
@@ -280,11 +280,12 @@ body{
 	-o-animation-name: shake;
 	animation-name: shake;
 }
-.board .o .rotate{
+.board .chess.o .rotate{
 	-webkit-transform:rotateY(-120deg);
+	
 }
 
-.board .x .rotate{
+.board .chess.x .rotate{
 	-webkit-transform:rotateY(120deg);
 }
 

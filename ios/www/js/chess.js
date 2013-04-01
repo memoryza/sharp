@@ -137,18 +137,15 @@ var Chess = Chess || {};
             $(this.elem).addClass("shake");
         },
         _setStaticClass:function(){
-            var that = this;
-            setTimeout(function(){
-                $(that.elem).removeClass("x").removeClass("o");
-                if(that.status === "x"){
-                    $(that.elem).addClass("x");
-                }
-                else if(that.status === "o"){
-                    $(that.elem).addClass("o");
-                }
-            }, 0);
-            sound.cow && sound.cow.play();
-
+            var that =this;
+            $(that.elem).removeClass("x").removeClass("o");
+            if(that.status === "x"){
+                $(that.elem).addClass("x");
+            }
+            else if(that.status === "o"){
+                $(that.elem).addClass("o");
+            }
+            
         },
         _transitionend:function(){
             if($(this.elem).hasClass("showShadow")){
@@ -157,7 +154,11 @@ var Chess = Chess || {};
         },
         _animationend:function(){
             $(this.elem).removeClass("shake");
-            this.clearAnim();
+            this._setStaticClass();
+            var that = this;
+            setTimeout(function(){
+                that.clearAnim();
+            }, 0)
         },
         showShadow:function(){
             $(this.elem).addClass("showShadow");
