@@ -191,7 +191,7 @@ body{
 
 
 /** <--------- cube chess class **/
-.board .chess{
+.chess{
 	display: inline-block;
 	position: absolute;
 	margin: 0px;
@@ -203,7 +203,7 @@ body{
 }
 
 
-.board .chess .trig{
+.chess .trig{
 	position: absolute;
 	top: 0px;
 	left: 0px;
@@ -214,111 +214,110 @@ body{
 	
 }
 
-.board .chess .rotate{
+.chess .rotate{
 	width: 100%;
 	height: 100%;
 	-webkit-transform-style: preserve-3d;
 	-webkit-transform: rotateY(0);
 }
 
-.board .chess.x2w .rotate{
+.chess.x2w .rotate{
 	-webkit-animation-name: x2w;
 	-moz-animation-name: x2w;
 	-o-animation-name: x2w;
 	animation-name: x2w;
 }
-.board .chess.x2o .rotate{
+.chess.x2o .rotate{
 	-webkit-animation-name: x2o;
 	-moz-animation-name: x2o;
 	-o-animation-name: x2o;
 	animation-name: x2o;
 }
-.board .chess.o2w .rotate{
+.chess.o2w .rotate{
 	-webkit-animation-name: o2w;
 	-moz-animation-name: o2w;
 	-o-animation-name: o2w;
 	animation-name: o2w;
 }
 
-.board .chess.o2x .rotate{
+.chess.o2x .rotate{
 	-webkit-animation-name: o2x;
 	-moz-animation-name: o2x;
 	-o-animation-name: o2x;
 	animation-name: o2x;
 }
-.board .chess.w2x .rotate{
+.chess.w2x .rotate{
 	-webkit-animation-name: w2x;
 	-moz-animation-name: w2x;
 	-o-animation-name: w2x;
 	animation-name: w2x;
 }
 
-.board .chess.w2o .rotate{
+.chess.w2o .rotate{
 	-webkit-animation-name: w2o;
 	-moz-animation-name: w2o;
 	-o-animation-name: w2o;
 	animation-name: w2o;
 }
 
-.board .chess.rockX .rotate{
+.chess.rockX .rotate{
 	-webkit-animation-name: rockX;
 	-moz-animation-name: rockX;
 	-o-animation-name: rockX;
 	animation-name: rockX;
 }
 
-.board .chess.rockO .rotate{
+.chess.rockO .rotate{
 	-webkit-animation-name: rockO;
 	-moz-animation-name: rockO;
 	-o-animation-name: rockO;
 	animation-name: rockO;
 }
 
-.board .chess.shake .trig{
+.chess.shake .trig{
 	-webkit-animation-name: shake;
 	-moz-animation-name: shake;
 	-o-animation-name: shake;
 	animation-name: shake;
 }
-.board .chess.o .rotate{
+.chess.o .rotate{
 	-webkit-transform:rotateY(-120deg);
 	
 }
 
-.board .chess.x .rotate{
+.chess.x .rotate{
 	-webkit-transform:rotateY(120deg);
 }
 
 
 
-.board .chess .face{
+.chess .face{
 	top: 0px;
 	left: 0px;
 	width: 100%;
 	height: 100%;
 	position: absolute;
 	-webkit-backface-visibility: hidden;
-	background-size: 428px 428px;
 	background-color: #fff;
 	-webkit-transform: translateZ(57.735px);
 }
-.board .chess .faceO{
+.chess .faceO{
 	background-image: url(../img/sprite.png);
 	background-color: #FA8181;
 	-webkit-transform: translateX(50px) translateZ(-28.8676px) rotateY(120deg);
 }
-.board .chess .faceX{
+.chess .faceX{
 	background-image: url(../img/sprite.png);
 	background-position:  -214px 0px;
 	background-color:  #74C3FF;
 	-webkit-transform: translateX(-50px) translateZ(-28.8676px) rotateY(240deg);
 }
-.board .chess .faceW{
+.chess .faceW{
 	background-image: url(../img/sprite.png);
 	background-position:  0px -214px;
 	background-color:  #ffffff;
 }
-.board .shadow{
+.shadow{
 	opacity: 0;
 	position: absolute;
 	width: 100%;
@@ -339,15 +338,65 @@ body{
 
 /*options board*/
 .option{
+	background: #fff;
 	position: absolute;
 	left: 0;
 	top: 0;
-	bottom: 0;
 	right: 0;
-	text-align: center;
-	background: #fff;
+	height:100%;
+	min-height: 960px;
+	overflow: hidden;
+	line-height: 0px;
+	-webkit-transform-style: preserve-3d;
+	-webkit-perspective: 99999999px;
+}
+.option .chess.single{
+	position: absolute;
+	left:-webkit-calc(50% - 107px);
+	top :26px;
+}
+.option .chess.mulit{
+	position: absolute;
+	left:-webkit-calc(50% - 107px);
+	top :266px;
 }
 
+.option .chess.sound{
+	position: absolute;
+	left:-webkit-calc(50% - 107px);
+	top :530px;
+}
+
+.option .chess .face{
+	background-color: #808080;
+}
+.option .chess.single .faceW{
+	background-position:-214px -214px;
+}
+.option .chess.single .faceO{
+	background:#fff;
+}
+.option .chess.single .faceX{
+	background:#fff;
+}
+.option .chess.mulit .faceW{
+	background-position:0px -428px;
+}
+.option .chess.mulit .faceO{
+	background:#fff;
+}
+.option .chess.mulit .faceX{
+	background:#fff;
+}
+.option .chess.sound .faceW{
+	background-position:-214px -428px;
+}
+.option .chess.sound .faceO{
+	background:#fff;
+}
+.option .chess.sound .faceX{
+	background-position:0px -642px;
+}
 
 
 

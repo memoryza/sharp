@@ -22,6 +22,7 @@ var Chess = Chess || {};
         var def = {
             id:null,
             elem:null,
+            kind:"",
             status:"w",
             parent:$(".board").get(0),
             template:'<div class="chess"><div class="shadow animated"></div><div class="trig animated hinge"><div class="rotate animated"><div class="faceO face"></div><div class="faceX face"></div><div class="faceW face"></div></div></div></div>'
@@ -46,6 +47,10 @@ var Chess = Chess || {};
         init:function(){
             var that = this;
             this.elem = $(this.template).get(0);
+
+            if(this.kind){
+                $(this.elem).addClass(this.kind);
+            }
             this.shadowElem = $(this.elem).find(".shadow").get(0);
             this.rotateElem = $(this.elem).find(".rotate").get(0);
 
