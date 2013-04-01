@@ -447,7 +447,7 @@ function judgeWin(){
         hasWiner = true;
     }
 
-    if(sta.step >=9 || hasWiner ){
+    if(hasWiner){
     	if(!!winner){
             if(winner == 'o'){
             }else{
