@@ -377,13 +377,7 @@ function render(){
 }
 
 function next(){
-    //当步骤为8的时候 移除一个。
-    if(sta.step >= 8){
-        var _coord = sta.history[sta.step-8];
-        sta.array[_coord.x][_coord.y] = null;
-    }
     sta.step++;
-
     render();
     var finish = judgeWin();
     if(!!finish){
@@ -395,6 +389,19 @@ function next(){
         return;
     }
 
+    if(sta.step >= 6){
+        var _coord = history[sta.step -6];
+        var _chess = chesses[_coord.x*3 + _coord.y];
+        _chess.rock();
+    }
+
+    //当步骤为8的时候 移除一个。
+    if(sta.step >= 7){
+        var _coord = history[sta.step-7];
+        sta.array[_coord.x][_coord.y] = null;
+        render();
+    }
+
     sta.turn = sta.turn == options.roles.p1 ?  options.roles.p2 :  options.roles.p1;
 
     if(sta.turn.type == 'computer'){
@@ -402,7 +409,7 @@ function next(){
              comTurn();
         },500);
     }
-
+    // render();
 }
 
 function judgeWin(){
