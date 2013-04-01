@@ -4,7 +4,6 @@ var clickEvent =  'ontouchstart' in window ? 'touchend' : 'click';
 
 var  Board = doc.querySelector('.board');
 var chesses = [];
-var history = [];
 var HOST = 'http://localhost:9090'
 
 var SOCKET;
@@ -113,6 +112,7 @@ function start(){
     sta.array = [[null,null,null],[null,null,null],[null,null,null]];
     sta.offensive = sta.round % 2 == 0 ? options.roles.p1 : options.roles.p2;
     sta.turn = sta.offensive;
+    sta.history = [];
 
     if(sta.turn.type == 'people'){
         console.log('wait for start!');
@@ -127,10 +127,7 @@ function start(){
 
 //init loading images&sounds
 function initLoader(callback){
-
-
     var loader = new PxLoader();
-
     var i, len, url;
 
     // queue each sound for loading
@@ -268,7 +265,7 @@ function putChess(type,coord){
     var array = sta.array;
     array[coord.x][coord.y] = type;
     next();
-    history.push(coord);
+    sta.history.push(coord);
 }
 
 
@@ -390,14 +387,14 @@ function next(){
     }
 
     if(sta.step >= 6){
-        var _coord = history[sta.step -6];
+        var _coord = sta.history[sta.step -6];
         var _chess = chesses[_coord.x*3 + _coord.y];
         _chess.rock();
     }
 
     //当步骤为8的时候 移除一个。
     if(sta.step >= 7){
-        var _coord = history[sta.step-7];
+        var _coord = sta.history[sta.step-7];
         sta.array[_coord.x][_coord.y] = null;
         render();
     }
@@ -448,12 +445,6 @@ function judgeWin(){
     }
 
     if(hasWiner){
-    	if(!!winner){
-            if(winner == 'o'){
-            }else{
-            }
-    	}else{
-    	}
     	finished = true;
     }
     return finished;
