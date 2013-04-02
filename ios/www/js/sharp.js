@@ -25,10 +25,7 @@ var doc = document;
 
 var clickEvent =  'ontouchstart' in window ? 'touchend' : 'click';
 
-var Board = doc.querySelector('.board'),
-    singleBtn,
-    multiBtn,
-    soundBtn;
+var  Board = doc.querySelector('.board');
 var chesses = [];
 var HOST = 'http://localhost:9090'
 
@@ -50,21 +47,22 @@ soundManager.useHTML5Audio = true;
 soundManager.preferFlash = false;
 
 // 游戏选项
-// endLess : 是不是无尽模式
-// roles
-//    type : 'people','computer','net-friend'
 var options = {
-    endLess : false,
+    endLess : false, //是否为无尽模式
     roles : {
         p1 : {
-            type : 'people',
-            name : 'p1',
-            value : 'o'
+            type  : 'people', //['people','computer','net-friend']
+            name  : 'p1',
+            value : 'o',
+            win   : 0,        //获胜次数
+            lose  : 0         //失败次数
         },
         p2 : {
-            type : 'people',
-            name : 'p2',
-            value : 'x'
+            type  : 'people',
+            name  : 'p2',
+            value : 'x',
+            win   : 0,
+            lose  : 0
         }
     }
 };
@@ -214,6 +212,7 @@ function start(){
     sta.turn = sta.offensive;
     sta.history = [];
     sta.timer = 0;
+    sta.times++;
 
     if(sta.turn.type == 'people'){
         console.log('wait for start!');
@@ -293,33 +292,10 @@ function initLoader(callback){
 
 function initChess(){
     initLoader(function(){
-        //button a t start
-        singleBtn = Chess.create({
-            kind:"single",
-            parent:$(".option").get(0)
-
-        });
-        
-        mulitBtn = Chess.create({
-            kind:"mulit",
-            parent:$(".option").get(0)
-
-        });
-        
-        soundBtn = Chess.create({
-            kind:"sound",
-            parent:$(".option").get(0)
-
-        });
-
-
-
-
-        //vs model chess
         for(var i=0; i<9; i++){
             chesses[i] = Chess.create();
             chesses[i].setStyle("left", chesses[i].id % 3 * 214 + "px");
-            chesses[i].setStyle("top", parseInt(i / 3, 10) * 214 + "px");
+            chesses[i].setStyle("top", parseInt(chesses[i].id / 3, 10) * 214 + "px");
         }
        
     })
@@ -499,6 +475,7 @@ function next(){
     // render();
 }
 
+//判断是否已经有人赢了
 function judgeWin(){
 	if(sta.step < 4){return;}
 	var winner;
@@ -536,6 +513,9 @@ function judgeWin(){
 
     if(hasWiner){
     	finished = true;
+        
+
+        
     }
     return finished;
 }
