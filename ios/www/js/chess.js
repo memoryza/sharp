@@ -21,6 +21,7 @@ var Chess = Chess || {};
         var newChess = Object.create(chessFn);
         var def = {
             id:null,
+            turnoverFn:null,
             elem:null,
             kind:"",
             status:"w",
@@ -82,7 +83,7 @@ var Chess = Chess || {};
             $(this.rotateElem)
             .removeClass("infinite");
         },
-        setX:function(){
+        setX:function(callback){
             if(!(this.status === "x")){
                 this.showShadow();
                 this.clearAnim();
@@ -93,10 +94,11 @@ var Chess = Chess || {};
             else if(this.status === "o"){
                 $(this.elem).addClass("o2x");
             }
+            this.turnoverFn = callback;
             this.status = "x";
             this._setStaticClass();
         },
-        setO:function(){
+        setO:function(callback){
             if(!(this.status === "o")){
                 this.showShadow();
                 this.clearAnim();
@@ -107,10 +109,11 @@ var Chess = Chess || {};
             else if(this.status === "x"){
                 $(this.elem).addClass("x2o");
             }
+            this.turnoverFn = callback;
             this.status = "o";
             this._setStaticClass();
         },
-        setW:function(){
+        setW:function(callback){
             if(!(this.status === "w")){
                 this.showShadow();
                 this.clearAnim();
@@ -121,6 +124,7 @@ var Chess = Chess || {};
             else if(this.status === "o"){
                 $(this.elem).addClass("o2w");
             }
+            this.turnoverFn = callback;
             this.status = "w";
             this._setStaticClass();
         },
@@ -163,6 +167,10 @@ var Chess = Chess || {};
             var that = this;
             setTimeout(function(){
                 that.clearAnim();
+                if(that.turnoverFn){
+                    that.turnoverFn && that.turnoverFn();
+                    delete that.turnoverFn;
+                }
             }, 0)
         },
         showShadow:function(){

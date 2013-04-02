@@ -96,17 +96,25 @@ function bindEvents(){
         start();
     }
 
-    doc.getElementById('option_1').addEventListener(clickEvent,function(){
-        _startWithType('computer');
+    doc.getElementById('single').addEventListener(clickEvent,function(){
+
+        singleBtn.setO(function(){
+            _startWithType('computer');
+        })
+        
     },false);
 
-    doc.getElementById('option_2').addEventListener(clickEvent,function(){
-       _startWithType('people');
+    doc.getElementById('multi').addEventListener(clickEvent,function(){
+
+        multiBtn.setO(function(){
+            _startWithType('people');
+        })
+        
     },false);
 
-    doc.getElementById('option_3').addEventListener(clickEvent,function(){
-        _startWithType('net-friend');
-    },false);
+    // doc.getElementById('option_3').addEventListener(clickEvent,function(){
+    //     _startWithType('net-friend');
+    // },false);
 }
 
 //开局
@@ -198,19 +206,19 @@ function initChess(){
         //button a t start
         singleBtn = Chess.create({
             kind:"single",
-            parent:$(".option").get(0)
+            parent:$("#singleHold").get(0)
 
         });
         
-        mulitBtn = Chess.create({
-            kind:"mulit",
-            parent:$(".option").get(0)
+        multiBtn = Chess.create({
+            kind:"multi",
+            parent:$("#multiHold").get(0)
 
         });
         
         soundBtn = Chess.create({
             kind:"sound",
-            parent:$(".option").get(0)
+            parent:$("#soundHold").get(0)
 
         });
 
