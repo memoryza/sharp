@@ -56,12 +56,26 @@ var sta = {
     times : 0
 };
 
-
 //程序初始化
 function init(){
     bindEvents();
     startTiming();
+    isShowReview();
 }
+
+function isShowReview(){
+    var playedTimes = ~~localStorage.getItem('PLAYEDTIMES') || 0;
+    playedTimes++;
+    localStorage.setItem('PLAYEDTIMES',playedTimes); 
+    if(playedTimes == 30){
+
+        alert('you should review our app!!');
+
+
+    }
+}
+
+
 
 function bindEvents(){
     var _option = doc.getElementById('option');
