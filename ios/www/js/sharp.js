@@ -96,6 +96,8 @@ function bindEvents(){
         singleBtn.setO(function(){
             _startWithType('computer');
         })
+
+        $(this).find(".btnTips").addClass("dismiss");
         
     },false);
 
@@ -104,6 +106,8 @@ function bindEvents(){
         multiBtn.setO(function(){
             _startWithType('people');
         })
+        
+        $(this).find(".btnTips").addClass("dismiss");
         
     },false);
 

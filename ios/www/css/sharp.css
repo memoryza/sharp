@@ -403,6 +403,12 @@ body{
 	line-height: 214px;
 	float: right;
 	font-size: 40px;
+	-webkit-transform: translateX(0px);
+	-webkit-transition:-webkit-transform 1s;
+}
+
+.option .btnTips.dismiss{
+	-webkit-transform: translateX(640px);
 }
 
 .option .chess .face{
