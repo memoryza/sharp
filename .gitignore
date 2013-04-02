@@ -1,5 +1,8 @@
 #mac temp files
 *.DS_Store
 
+#webStorm temp files
+*.idea
+
 #node modules
 server/node_modules

@@ -15,8 +15,6 @@ var Chess = Chess || {};
         }
     })
 
-
-
     exports.create = function(param){
         var newChess = Object.create(chessFn);
         var def = {

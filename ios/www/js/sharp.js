@@ -1,11 +1,9 @@
+
 var doc = document;
 
 var clickEvent =  'ontouchstart' in window ? 'touchend' : 'click';
 
-var Board = doc.querySelector('.board'),
-    singleBtn,
-    multiBtn,
-    soundBtn;
+var  Board = doc.querySelector('.board');
 var chesses = [];
 var HOST = 'http://localhost:9090'
 
@@ -20,28 +18,27 @@ var img = [],
         'cow'
     ];
 
-
-
 //go with HTML5 audio
 soundManager.useHTML5Audio = true;
 soundManager.preferFlash = false;
 
 // 游戏选项
-// endLess : 是不是无尽模式
-// roles
-//    type : 'people','computer','net-friend'
 var options = {
-    endLess : false,
+    endLess : false, //是否为无尽模式
     roles : {
         p1 : {
-            type : 'people',
-            name : 'p1',
-            value : 'o'
+            type  : 'people', //['people','computer','net-friend']
+            name  : 'p1',
+            value : 'o',
+            win   : 0,        //获胜次数
+            lose  : 0         //失败次数
         },
         p2 : {
-            type : 'people',
-            name : 'p2',
-            value : 'x'
+            type  : 'people',
+            name  : 'p2',
+            value : 'x',
+            win   : 0,
+            lose  : 0
         }
     }
 };
@@ -54,17 +51,20 @@ var sta = {
     history : [],
     turn : options.roles.p1,
     offensive : options.roles.p1,
-    array : [[null,null,null],[null,null,null],[null,null,null]]
+    array : [[null,null,null],[null,null,null],[null,null,null]],
+    timer : 0,
+    times : 0
 };
 
 
 //程序初始化
 function init(){
     bindEvents();
+    startTiming();
 }
 
 function bindEvents(){
-    var _option = doc.getElementById('option');
+    var _option = doc.getElementById('optionbg');
 
     var _startWithType = function(type){
         _option.style.display = 'none';
@@ -75,17 +75,12 @@ function bindEvents(){
             xhr.onreadystatechange = function(){
                 if(xhr.readyState === 4){
                     var key = xhr.responseText;
-
-                    console.log(key)
-                    
                     SOCKET = io.connect( HOST + '/' + key);
-
                     SOCKET.on('next',function(data){
                         console.log(data);
                         putChess(data.type,data.coord);
                         render();
                     });
-
                     start();
                 }
             };
@@ -115,6 +110,81 @@ function bindEvents(){
     // doc.getElementById('option_3').addEventListener(clickEvent,function(){
     //     _startWithType('net-friend');
     // },false);
+
+    Board.addEventListener(clickEvent,function(e){
+        if(sta.turn.type !== 'people'){return false;}
+        var array = sta.array;
+
+        var _target = e.target;
+        var x,y;
+        e = e.changedTouches ? e.changedTouches[0] : e;
+        if (e.pageX || e.pageY) { 
+          x = e.pageX;
+          y = e.pageY;
+        }else { 
+          x = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft; 
+          y = e.clientY + document.body.scrollTop + document.documentElement.scrollTop; 
+        } 
+        x -= Board.offsetLeft;
+        y -= Board.offsetTop;
+
+        var w,h;
+        w = Board.clientWidth;
+        h = Board.clientHeight;
+
+        var _v1 = ~~(y/h*3);
+        var _v2 = ~~(x/w*3);
+
+        if(!array[_v1]){return false;}
+        if(array[_v1][_v2] !== null){chesses[_v1*3 + _v2].shake(); return false;}
+
+        if(!!SOCKET){
+            SOCKET.emit('next', { type: sta.turn.value , coord : {x:_v1,y:_v2} });
+        }
+
+        putChess(sta.turn.value,{x:_v1,y:_v2});
+    },false);
+
+}
+
+
+//开始计时
+function startTiming(){
+    var nextFrame = (function () {
+        return window.requestAnimationFrame ||
+            window.webkitRequestAnimationFrame ||
+            window.mozRequestAnimationFrame ||
+            window.oRequestAnimationFrame ||
+            window.msRequestAnimationFrame ||
+            function (callback) {
+                return setTimeout(callback, 1);
+            };
+    })();
+
+    var cancelFrame = (function () {
+        return window.cancelRequestAnimationFrame ||
+            window.webkitCancelAnimationFrame ||
+            window.webkitCancelRequestAnimationFrame ||
+            window.mozCancelRequestAnimationFrame ||
+            window.oCancelRequestAnimationFrame ||
+            window.msCancelRequestAnimationFrame ||
+            clearTimeout;
+    })();
+
+    var start = Date.now();
+
+    var step = function(){
+        var _now = Date.now();
+
+        if(_now - start > 1000){
+            sta.timer++;
+            start = _now;
+            document.getElementById('infos').innerHTML = sta.timer;
+        }
+        nextFrame(step);
+    };
+
+    step();
 }
 
 //开局
@@ -124,6 +194,8 @@ function start(){
     sta.offensive = sta.round % 2 == 0 ? options.roles.p1 : options.roles.p2;
     sta.turn = sta.offensive;
     sta.history = [];
+    sta.timer = 0;
+    sta.times++;
 
     if(sta.turn.type == 'people'){
         console.log('wait for start!');
@@ -222,10 +294,6 @@ function initChess(){
 
         });
 
-
-
-
-        //vs model chess
         for(var i=0; i<9; i++){
             chesses[i] = Chess.create();
             chesses[i].setStyle("left", chesses[i].id % 3 * 214 + "px");
@@ -235,40 +303,6 @@ function initChess(){
     })
 }
 
-Board.addEventListener(clickEvent,function(e){
-
-    if(sta.turn.type !== 'people'){return false;}
-    var array = sta.array;
-
-    var _target = e.target;
-    var x,y;
-    e = e.changedTouches ? e.changedTouches[0] : e;
-    if (e.pageX || e.pageY) { 
-      x = e.pageX;
-      y = e.pageY;
-    }else { 
-      x = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft; 
-      y = e.clientY + document.body.scrollTop + document.documentElement.scrollTop; 
-    } 
-    x -= Board.offsetLeft;
-    y -= Board.offsetTop;
-
-    var w,h;
-    w = Board.clientWidth;
-    h = Board.clientHeight;
-
-    var _v1 = ~~(y/h*3);
-    var _v2 = ~~(x/w*3);
-
-    if(!array[_v1]){return false;}
-    if(array[_v1][_v2] !== null){chesses[_v1*3 + _v2].shake(); return false;}
-
-    if(!!SOCKET){
-        SOCKET.emit('next', { type: sta.turn.value , coord : {x:_v1,y:_v2} });
-    }
-
-    putChess(sta.turn.value,{x:_v1,y:_v2});
-},false);
 
 function comTurn(){
 	if(sta.turn.type !== 'computer'){return false;}
@@ -443,9 +477,10 @@ function next(){
     // render();
 }
 
+//判断是否已经有人赢了
 function judgeWin(){
 	if(sta.step < 4){return;}
-	var winner;
+	var winnerType = null;
 	var hasWiner = false;
 	var finished = false;
     var array = sta.array;
@@ -455,13 +490,13 @@ function judgeWin(){
             if(array[i][j] == null){continue;}
 
             if(array[i][j%3] == array[i][(j+1)%3] && array[i][(j+1)%3]  == array[i][(j+2)%3] ){
-                winner = array[i][j];
+                winnerType = array[i][j];
                 hasWiner = true;
                 break;
             }
 
             if(array[i%3][j] == array[(i+1)%3][j] &&  array[(i+1)%3][j]  ==  array[(i+2)%3][j] ){
-                winner = array[i][j];
+                winnerType = array[i][j];
                 hasWiner = true;
                 break;
             }
@@ -469,17 +504,25 @@ function judgeWin(){
     }
 
 	if(array[0][0] && array[0][0] == array[1][1] && array[1][1]  == array[2][2]){
-        winner = array[0][0];
+        winnerType = array[0][0];
         hasWiner = true;
 	}
 
     if(array[2][0] && array[2][0] == array[1][1] && array[1][1]  == array[0][2]){
-        winner = array[2][0];
+        winnerType = array[2][0];
         hasWiner = true;
     }
 
+    //当不是无尽模式的时候 还要考虑平局的情况。
     if(hasWiner){
     	finished = true;
+        if(options.roles.p1.type === winnerType){
+            options.roles.p1.win++;
+            options.roles.p2.lose++;
+        }else{
+            options.roles.p2.win++;
+            options.roles.p1.lose++;
+        }
     }
     return finished;
 }
@@ -487,5 +530,7 @@ function judgeWin(){
 soundManager.onready(function() {
     initChess();
 });
+
+// document.addEventListener('deviceready', init, false);
 
 init();

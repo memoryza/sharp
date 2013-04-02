@@ -13,7 +13,7 @@
 </head>
 <body>
 	<div class="board"></div>
-	<div class="optionbg">
+	<div id="optionbg" class="optionbg">
 		<div class="option" id="option">
 			<div id="single" class="mainBtn"><div id="singleHold"></div><div class="btnTips">1 Player</div></div>
 			<div id="multi" class="mainBtn"><div id="multiHold"></div><div class="btnTips">2 Player</div></div>
@@ -21,7 +21,7 @@
 		</div>
 	</div>
 
-	<a href="mailto:?subject=subject of the email&body=whatever body body" target="_blank">send email</a>
+	<div id="infos">0</div>
 
 	<script type="text/javascript" src="cordova-2.5.0.js"></script>
 	<script type="text/javascript" src="EmailComposer.js">\</script>
@@ -34,15 +34,5 @@
 	<script type="text/javascript" src="js/zepto.min.js"></script>
 	<script src="js/chess.js"></script>
 	<script type="text/javascript" src="js/sharp.js"></script>
-
-	 <script type="text/javascript">
-            app.initialize();
-            
-            var args;
-            //            cordova.exec(null, null, "EmailComposer", "showEmailComposer", [args]);
-            
-            </script>
-        
-        <center><button onclick="cordova.exec(null, null, 'EmailComposer', 'showEmailComposer', [args]);">Compose Email</button></center>
 </body>
 </html>
