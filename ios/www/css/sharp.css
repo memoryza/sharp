@@ -1,5 +1,35 @@
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 300;
+  src: local('Open Sans Light'), local('OpenSans-Light'), url(../fonts/OpenSansLight.woff) format('woff');
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Open Sans'), local('OpenSans'), url(../fonts/OpenSans.woff) format('woff');
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 600;
+  src: local('Open Sans Semibold'), local('OpenSans-Semibold'), url(../fonts/OpenSansSemibold.woff) format('woff');
+}
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 700;
+  src: local('Open Sans Bold'), local('OpenSans-Bold'), url(../fonts/OpenSansBold.woff) format('woff');
+}
+
+
 body{
+	font-family:Open Sans, Sans;
 	background: #ffffff;
+	position: relative;
 	margin:0;
 	-webkit-backface-visibility: hidden;
 }
@@ -337,34 +367,42 @@ body{
 
 
 /*options board*/
+
+.optionbg{
+	width: 100%;
+	position: absolute;
+	top: 0px;
+	bottom: 0px;
+}
+
 .option{
 	background: #fff;
 	position: absolute;
 	left: 0;
-	top: 0;
+	top: 50%;
+	margin-top:-345px;
 	right: 0;
-	height:100%;
-	min-height: 960px;
 	overflow: hidden;
 	line-height: 0px;
 	-webkit-transform-style: preserve-3d;
 	-webkit-perspective: 99999999px;
 }
-.option .chess.single{
-	position: absolute;
-	left:-webkit-calc(50% - 107px);
-	top :26px;
-}
-.option .chess.mulit{
-	position: absolute;
-	left:-webkit-calc(50% - 107px);
-	top :266px;
+.option .mainBtn{
+	width:460px;
+	padding-top: 24px;
+	margin: 0 auto;
+	height: 214px;
 }
 
-.option .chess.sound{
-	position: absolute;
-	left:-webkit-calc(50% - 107px);
-	top :530px;
+
+.option .mainBtn:first-child{
+	padding-top: 0px;
+}
+
+.option .btnTips{
+	line-height: 214px;
+	float: right;
+	font-size: 40px;
 }
 
 .option .chess .face{
@@ -379,13 +417,13 @@ body{
 .option .chess.single .faceX{
 	background:#fff;
 }
-.option .chess.mulit .faceW{
+.option .chess.multi .faceW{
 	background-position:0px -428px;
 }
-.option .chess.mulit .faceO{
+.option .chess.multi .faceO{
 	background:#fff;
 }
-.option .chess.mulit .faceX{
+.option .chess.multi .faceX{
 	background:#fff;
 }
 .option .chess.sound .faceW{

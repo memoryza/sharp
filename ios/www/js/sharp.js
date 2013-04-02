@@ -78,7 +78,7 @@ function isShowReview(){
 
 
 function bindEvents(){
-    var _option = doc.getElementById('option');
+    var _option = doc.getElementById('optionbg');
 
     var _startWithType = function(type){
         _option.style.display = 'none';
@@ -105,13 +105,25 @@ function bindEvents(){
         start();
     }
 
-    doc.getElementById('option_1').addEventListener(clickEvent,function(){
-        _startWithType('computer');
+    doc.getElementById('single').addEventListener(clickEvent,function(){
+
+        singleBtn.setO(function(){
+            _startWithType('computer');
+        })
+        
     },false);
 
-    doc.getElementById('option_2').addEventListener(clickEvent,function(){
-       _startWithType('people');
-    },false); 
+    doc.getElementById('multi').addEventListener(clickEvent,function(){
+
+        multiBtn.setO(function(){
+            _startWithType('people');
+        })
+        
+    },false);
+
+    // doc.getElementById('option_3').addEventListener(clickEvent,function(){
+    //     _startWithType('net-friend');
+    // },false);
 
     Board.addEventListener(clickEvent,function(e){
         if(sta.turn.type !== 'people'){return false;}
@@ -277,10 +289,29 @@ function initLoader(callback){
 
 function initChess(){
     initLoader(function(){
+        //button a t start
+        singleBtn = Chess.create({
+            kind:"single",
+            parent:$("#singleHold").get(0)
+
+        });
+        
+        multiBtn = Chess.create({
+            kind:"multi",
+            parent:$("#multiHold").get(0)
+
+        });
+        
+        soundBtn = Chess.create({
+            kind:"sound",
+            parent:$("#soundHold").get(0)
+
+        });
+
         for(var i=0; i<9; i++){
             chesses[i] = Chess.create();
             chesses[i].setStyle("left", chesses[i].id % 3 * 214 + "px");
-            chesses[i].setStyle("top", parseInt(chesses[i].id / 3, 10) * 214 + "px");
+            chesses[i].setStyle("top", parseInt(i / 3, 10) * 214 + "px");
         }
        
     })
