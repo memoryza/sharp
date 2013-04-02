@@ -59,8 +59,6 @@ var sta = {
 
 //程序初始化
 function init(){
-
-
     bindEvents();
     startTiming();
 }
@@ -99,11 +97,7 @@ function bindEvents(){
 
     doc.getElementById('option_2').addEventListener(clickEvent,function(){
        _startWithType('people');
-    },false);
-
-    // doc.getElementById('option_3').addEventListener(clickEvent,function(){
-    //     _startWithType('net-friend');
-    // },false);
+    },false); 
 
     Board.addEventListener(clickEvent,function(e){
         if(sta.turn.type !== 'people'){return false;}
@@ -509,4 +503,3 @@ soundManager.onready(function() {
 // document.addEventListener('deviceready', init, false);
 
 init();
-
