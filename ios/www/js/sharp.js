@@ -108,7 +108,10 @@ function bindEvents(){
     doc.getElementById('single').addEventListener(clickEvent,function(){
 
         singleBtn.setO(function(){
-            _startWithType('computer');
+            setTimeout(function(){
+                _startWithType('computer');
+            }, 300)
+            
         })
 
         $(this).find(".btnTips").addClass("dismiss");
@@ -117,8 +120,12 @@ function bindEvents(){
 
     doc.getElementById('multi').addEventListener(clickEvent,function(){
 
+
+
         multiBtn.setO(function(){
-            _startWithType('people');
+            setTimeout(function(){
+                _startWithType('people');
+            }, 300)
         })
         
         $(this).find(".btnTips").addClass("dismiss");

@@ -367,6 +367,7 @@
 	position: absolute;
 	top: 0px;
 	bottom: 0px;
+	background:#fff;
 }
 
 .option{
@@ -398,10 +399,12 @@
 	float: right;
 	font-size: 40px;
 	-webkit-transform: translateX(0px);
-	-webkit-transition:-webkit-transform 1s;
+	opacity: 1;
+	-webkit-transition:-webkit-transform 1s, opacity 1s;
 }
 
 .option .btnTips.dismiss{
+	opacity:0;
 	-webkit-transform: translateX(640px);
 }
 
