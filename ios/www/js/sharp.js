@@ -1,3 +1,26 @@
+
+// document.addEventListener('deviceready', onDeviceReady, false);
+
+// function onDeviceReady(){
+//     navigator.notification.confirm(
+//                 'If you enjoy using ###, whould you mind taking a moment to rate it? It won\'t take more than a minute. Thanks for your support!',
+//                 function(button) {
+//                     // yes = 1, no = 2, later = 3
+//                     if (button == '1') {    // Rate Now
+
+//                         // <a href="https://itunes.apple.com/cn/app/mei-tao-jiahd/id591302737?mt=8&uo=4" target="itunes_store">美淘家HD - QIU GUISHUN</a>
+//                         // window.open('itms-apps://itunes.apple.com/zh/app/mei-tao-jia/id605274602?ls=1&mt=8','_system'); // or itms://
+//                         window.open('https://itunes.apple.com/cn/app/mei-tao-jia/id605274602?mt=8&uo=4','_system'); // or itms://
+//                         // this.core.rate_app = false;
+//                     } else if (button == '2') { // Later
+//                         // this.core.rate_app_counter = 0;
+//                     } else if (button == '3') { // No
+//                         // this.core.rate_app = false;
+//                     }
+//     }, 'Rate ###', 'Rate ###,Remind me later, No Thanks!');
+// }
+
+
 var doc = document;
 
 var clickEvent =  'ontouchstart' in window ? 'touchend' : 'click';
@@ -51,13 +74,16 @@ var sta = {
     history : [],
     turn : options.roles.p1,
     offensive : options.roles.p1,
-    array : [[null,null,null],[null,null,null],[null,null,null]]
+    array : [[null,null,null],[null,null,null],[null,null,null]],
+    timer : 0,
+    times : 0
 };
 
 
 //程序初始化
 function init(){
     bindEvents();
+    startTiming();
 }
 
 function bindEvents(){
@@ -72,17 +98,12 @@ function bindEvents(){
             xhr.onreadystatechange = function(){
                 if(xhr.readyState === 4){
                     var key = xhr.responseText;
-
-                    console.log(key)
-                    
                     SOCKET = io.connect( HOST + '/' + key);
-
                     SOCKET.on('next',function(data){
                         console.log(data);
                         putChess(data.type,data.coord);
                         render();
                     });
-
                     start();
                 }
             };
@@ -104,6 +125,82 @@ function bindEvents(){
     doc.getElementById('option_3').addEventListener(clickEvent,function(){
         _startWithType('net-friend');
     },false);
+
+
+    Board.addEventListener(clickEvent,function(e){
+        if(sta.turn.type !== 'people'){return false;}
+        var array = sta.array;
+
+        var _target = e.target;
+        var x,y;
+        e = e.changedTouches ? e.changedTouches[0] : e;
+        if (e.pageX || e.pageY) { 
+          x = e.pageX;
+          y = e.pageY;
+        }else { 
+          x = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft; 
+          y = e.clientY + document.body.scrollTop + document.documentElement.scrollTop; 
+        } 
+        x -= Board.offsetLeft;
+        y -= Board.offsetTop;
+
+        var w,h;
+        w = Board.clientWidth;
+        h = Board.clientHeight;
+
+        var _v1 = ~~(y/h*3);
+        var _v2 = ~~(x/w*3);
+
+        if(!array[_v1]){return false;}
+        if(array[_v1][_v2] !== null){chesses[_v1*3 + _v2].shake(); return false;}
+
+        if(!!SOCKET){
+            SOCKET.emit('next', { type: sta.turn.value , coord : {x:_v1,y:_v2} });
+        }
+
+        putChess(sta.turn.value,{x:_v1,y:_v2});
+    },false);
+
+}
+
+
+//开始计时
+function startTiming(){
+    var nextFrame = (function () {
+        return window.requestAnimationFrame ||
+            window.webkitRequestAnimationFrame ||
+            window.mozRequestAnimationFrame ||
+            window.oRequestAnimationFrame ||
+            window.msRequestAnimationFrame ||
+            function (callback) {
+                return setTimeout(callback, 1);
+            };
+    })();
+
+    var cancelFrame = (function () {
+        return window.cancelRequestAnimationFrame ||
+            window.webkitCancelAnimationFrame ||
+            window.webkitCancelRequestAnimationFrame ||
+            window.mozCancelRequestAnimationFrame ||
+            window.oCancelRequestAnimationFrame ||
+            window.msCancelRequestAnimationFrame ||
+            clearTimeout;
+    })();
+
+    var start = Date.now();
+
+    var step = function(){
+        var _now = Date.now();
+
+        if(_now - start > 1000){
+            sta.timer++;
+            start = _now;
+            document.getElementById('infos').innerHTML = sta.timer;
+        }
+        nextFrame(step);
+    };
+
+    step();
 }
 
 //开局
@@ -113,6 +210,7 @@ function start(){
     sta.offensive = sta.round % 2 == 0 ? options.roles.p1 : options.roles.p2;
     sta.turn = sta.offensive;
     sta.history = [];
+    sta.timer = 0;
 
     if(sta.turn.type == 'people'){
         console.log('wait for start!');
@@ -201,40 +299,6 @@ function initChess(){
     })
 }
 
-Board.addEventListener(clickEvent,function(e){
-
-    if(sta.turn.type !== 'people'){return false;}
-    var array = sta.array;
-
-    var _target = e.target;
-    var x,y;
-    e = e.changedTouches ? e.changedTouches[0] : e;
-    if (e.pageX || e.pageY) { 
-      x = e.pageX;
-      y = e.pageY;
-    }else { 
-      x = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft; 
-      y = e.clientY + document.body.scrollTop + document.documentElement.scrollTop; 
-    } 
-    x -= Board.offsetLeft;
-    y -= Board.offsetTop;
-
-    var w,h;
-    w = Board.clientWidth;
-    h = Board.clientHeight;
-
-    var _v1 = ~~(y/h*3);
-    var _v2 = ~~(x/w*3);
-
-    if(!array[_v1]){return false;}
-    if(array[_v1][_v2] !== null){chesses[_v1*3 + _v2].shake(); return false;}
-
-    if(!!SOCKET){
-        SOCKET.emit('next', { type: sta.turn.value , coord : {x:_v1,y:_v2} });
-    }
-
-    putChess(sta.turn.value,{x:_v1,y:_v2});
-},false);
 
 function comTurn(){
 	if(sta.turn.type !== 'computer'){return false;}
