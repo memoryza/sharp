@@ -1,26 +1,4 @@
 
-// document.addEventListener('deviceready', onDeviceReady, false);
-
-// function onDeviceReady(){
-//     navigator.notification.confirm(
-//                 'If you enjoy using ###, whould you mind taking a moment to rate it? It won\'t take more than a minute. Thanks for your support!',
-//                 function(button) {
-//                     // yes = 1, no = 2, later = 3
-//                     if (button == '1') {    // Rate Now
-
-//                         // <a href="https://itunes.apple.com/cn/app/mei-tao-jiahd/id591302737?mt=8&uo=4" target="itunes_store">美淘家HD - QIU GUISHUN</a>
-//                         // window.open('itms-apps://itunes.apple.com/zh/app/mei-tao-jia/id605274602?ls=1&mt=8','_system'); // or itms://
-//                         window.open('https://itunes.apple.com/cn/app/mei-tao-jia/id605274602?mt=8&uo=4','_system'); // or itms://
-//                         // this.core.rate_app = false;
-//                     } else if (button == '2') { // Later
-//                         // this.core.rate_app_counter = 0;
-//                     } else if (button == '3') { // No
-//                         // this.core.rate_app = false;
-//                     }
-//     }, 'Rate ###', 'Rate ###,Remind me later, No Thanks!');
-// }
-
-
 var doc = document;
 
 var clickEvent =  'ontouchstart' in window ? 'touchend' : 'click';
@@ -39,8 +17,6 @@ var img = [],
     soundNames = [
         'cow'
     ];
-
-
 
 //go with HTML5 audio
 soundManager.useHTML5Audio = true;
@@ -83,6 +59,8 @@ var sta = {
 
 //程序初始化
 function init(){
+
+
     bindEvents();
     startTiming();
 }
@@ -123,10 +101,9 @@ function bindEvents(){
        _startWithType('people');
     },false);
 
-    doc.getElementById('option_3').addEventListener(clickEvent,function(){
-        _startWithType('net-friend');
-    },false);
-
+    // doc.getElementById('option_3').addEventListener(clickEvent,function(){
+    //     _startWithType('net-friend');
+    // },false);
 
     Board.addEventListener(clickEvent,function(e){
         if(sta.turn.type !== 'people'){return false;}
@@ -478,7 +455,7 @@ function next(){
 //判断是否已经有人赢了
 function judgeWin(){
 	if(sta.step < 4){return;}
-	var winner;
+	var winnerType = null;
 	var hasWiner = false;
 	var finished = false;
     var array = sta.array;
@@ -488,13 +465,13 @@ function judgeWin(){
             if(array[i][j] == null){continue;}
 
             if(array[i][j%3] == array[i][(j+1)%3] && array[i][(j+1)%3]  == array[i][(j+2)%3] ){
-                winner = array[i][j];
+                winnerType = array[i][j];
                 hasWiner = true;
                 break;
             }
 
             if(array[i%3][j] == array[(i+1)%3][j] &&  array[(i+1)%3][j]  ==  array[(i+2)%3][j] ){
-                winner = array[i][j];
+                winnerType = array[i][j];
                 hasWiner = true;
                 break;
             }
@@ -502,20 +479,25 @@ function judgeWin(){
     }
 
 	if(array[0][0] && array[0][0] == array[1][1] && array[1][1]  == array[2][2]){
-        winner = array[0][0];
+        winnerType = array[0][0];
         hasWiner = true;
 	}
 
     if(array[2][0] && array[2][0] == array[1][1] && array[1][1]  == array[0][2]){
-        winner = array[2][0];
+        winnerType = array[2][0];
         hasWiner = true;
     }
 
+    //当不是无尽模式的时候 还要考虑平局的情况。
     if(hasWiner){
     	finished = true;
-        
-
-        
+        if(options.roles.p1.type === winnerType){
+            options.roles.p1.win++;
+            options.roles.p2.lose++;
+        }else{
+            options.roles.p2.win++;
+            options.roles.p1.lose++;
+        }
     }
     return finished;
 }
@@ -524,4 +506,7 @@ soundManager.onready(function() {
     initChess();
 });
 
+// document.addEventListener('deviceready', init, false);
+
 init();
+
