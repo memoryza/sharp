@@ -25,7 +25,10 @@ var doc = document;
 
 var clickEvent =  'ontouchstart' in window ? 'touchend' : 'click';
 
-var  Board = doc.querySelector('.board');
+var Board = doc.querySelector('.board'),
+    singleBtn,
+    multiBtn,
+    soundBtn;
 var chesses = [];
 var HOST = 'http://localhost:9090'
 
@@ -290,10 +293,33 @@ function initLoader(callback){
 
 function initChess(){
     initLoader(function(){
+        //button a t start
+        singleBtn = Chess.create({
+            kind:"single",
+            parent:$(".option").get(0)
+
+        });
+        
+        mulitBtn = Chess.create({
+            kind:"mulit",
+            parent:$(".option").get(0)
+
+        });
+        
+        soundBtn = Chess.create({
+            kind:"sound",
+            parent:$(".option").get(0)
+
+        });
+
+
+
+
+        //vs model chess
         for(var i=0; i<9; i++){
             chesses[i] = Chess.create();
             chesses[i].setStyle("left", chesses[i].id % 3 * 214 + "px");
-            chesses[i].setStyle("top", parseInt(chesses[i].id / 3, 10) * 214 + "px");
+            chesses[i].setStyle("top", parseInt(i / 3, 10) * 214 + "px");
         }
        
     })
