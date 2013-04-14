@@ -37,7 +37,7 @@ textarea{
 }
 
 .none{
-    display: none;
+    display: none!important;
 }
 
 html,body{
