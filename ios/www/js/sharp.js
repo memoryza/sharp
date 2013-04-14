@@ -7,7 +7,10 @@ var  Board = doc.querySelector('.board');
 var chesses = [];
 var HOST = 'http://localhost:9090'
 
-var SOCKET;
+var SOCKET,
+    state = {
+        sound : "on"
+    };
 
 var img = [],
     imgNames = [
@@ -108,11 +111,24 @@ function bindEvents(){
     doc.getElementById('single').addEventListener(clickEvent,function(){
 
         singleBtn.setO(function(){
+
+
+
+
             setTimeout(function(){
                 _startWithType('computer');
             }, 300)
             
         })
+
+        hideSound();
+        setTimeout(function(){
+            hideSplit();
+        }, 100);
+        setTimeout(function(){
+            hideMulti();
+        }, 200);
+
 
         $(this).find(".btnTips").addClass("dismiss");
         
@@ -127,10 +143,41 @@ function bindEvents(){
                 _startWithType('people');
             }, 300)
         })
+
+
+        hideSound();
+        setTimeout(function(){
+            hideSplit();
+        }, 100);
+        setTimeout(function(){
+            hideSingle();
+        }, 200);
+
         
         $(this).find(".btnTips").addClass("dismiss");
         
     },false);
+
+
+
+    doc.getElementById('sound').addEventListener(clickEvent,function(){
+        if(state.sound === "on"){
+            soundBtn.setX();
+            $("#sound .btnTips").html("Sound off");
+            state.sound = "off";
+        }
+        else if(state.sound === "off"){
+            soundBtn.setW();
+            $("#sound .btnTips").html("Sound on");
+            state.sound = "on";
+        }
+
+        
+    },false);
+
+
+
+    
 
     // doc.getElementById('option_3').addEventListener(clickEvent,function(){
     //     _startWithType('net-friend');
@@ -296,6 +343,20 @@ function initLoader(callback){
     loader.start();
 
 }
+
+//<<------option shense
+
+
+"Sound Split Multi Single".split(" ").forEach(function(name){
+    window["hide" + name] = function(){
+        $("#" + name.toLowerCase()).css("-webkit-transform", "translateY(" + (name === "Single" ? "-" : "") + "1200px)");
+    }
+    window["show" + name] = function(){
+        $("#" + name.toLowerCase()).css("-webkit-transform", "translateY(0px)");
+    }
+})
+
+//option shense--------->>
 
 
 function initChess(){

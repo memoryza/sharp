@@ -155,14 +155,18 @@ var Chess = Chess || {};
             
         },
         _transitionend:function(){
-            if($(this.elem).hasClass("showShadow")){
-                this.hideShadow();
-            }
+            
         },
         _animationend:function(){
             $(this.elem).removeClass("shake");
             this._setStaticClass();
             var that = this;
+
+
+            if($(this.shadowElem).hasClass("flash")){
+                this.hideShadow();
+            }
+
             setTimeout(function(){
                 that.clearAnim();
                 if(that.turnoverFn){
@@ -172,12 +176,10 @@ var Chess = Chess || {};
             }, 0)
         },
         showShadow:function(){
-            $(this.elem).addClass("showShadow");
             $(this.shadowElem).addClass("flash");
             this.setStyle("-webkit-transform", "translateZ(1000px)");
         },
         hideShadow:function(){
-            $(this.elem).removeClass("showShadow");
             $(this.shadowElem).removeClass("flash");
             this.setStyle("-webkit-transform", "translateZ(0px)");
         }
