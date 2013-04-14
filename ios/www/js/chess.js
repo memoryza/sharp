@@ -141,6 +141,7 @@ var Chess = Chess || {};
             $(this.elem).removeClass("rockO");
         },
         shake:function(){
+            this.showShadow();
             $(this.elem).addClass("shake");
         },
         _setStaticClass:function(){
@@ -155,7 +156,7 @@ var Chess = Chess || {};
             
         },
         _transitionend:function(){
-            
+
         },
         _animationend:function(){
             $(this.elem).removeClass("shake");

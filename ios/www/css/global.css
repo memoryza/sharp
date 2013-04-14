@@ -1,3 +1,30 @@
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 300;
+  src: local('Open Sans Light'), local('OpenSans-Light'), url(../fonts/OpenSansLight.woff) format('woff');
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Open Sans'), local('OpenSans'), url(../fonts/OpenSans.woff) format('woff');
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 600;
+  src: local('Open Sans Semibold'), local('OpenSans-Semibold'), url(../fonts/OpenSansSemibold.woff) format('woff');
+}
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 700;
+  src: local('Open Sans Bold'), local('OpenSans-Bold'), url(../fonts/OpenSansBold.woff) format('woff');
+}
+
 * :not(input){
     -webkit-user-select: none;
     -webkit-tap-highlight-color: rgba(0,0,0,0); 
@@ -7,6 +34,10 @@
 
 textarea{
   -webkit-user-select:text;
+}
+
+.none{
+    display: none;
 }
 
 html,body{
