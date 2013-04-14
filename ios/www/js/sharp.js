@@ -72,20 +72,68 @@ function isShowReview(){
     localStorage.setItem('PLAYEDTIMES',playedTimes); 
     if(playedTimes == 30){
 
-        alert('you should review our app!!');
+        //alert('you should review our app!!');
 
 
     }
 }
 
+function initBattleHidden(callback){
+    $("#turnTips").removeClass("show");
+    $("#back").removeClass("show");
+    //let X face blank first
+    chesses.forEach(function(chess, i){
+        chess.setX(function(){
+            if(i >= chesses.length -1){
+                callback && callback();
+            }
+        });
+        chess.setXBlank();
+    })
+}
+
+function initBattleShow(callback){
+    checkTipsStatusByTurn();
+    $("#turnTips").addClass("show");
+    $("#back").addClass("show");
+    //let X face blank first
+    chesses.forEach(function(chess, i){
+        setTimeout(function(){
+            chess.setW(function(){
+                chess.setXNormal();
+                if(i >= chesses.length -1){
+                    callback && callback();
+                }
+            });    
+        }, i * 100)
+    })
+}
+
+
+function setBarTips(text){
+    $("#turnTips .tips").html(text);
+}
+
+function setBarStatus(status){
+    $("#turnTips").removeClass("xStatus oStatus");
+    if(status === "x"){
+        $("#turnTips").addClass("xStatus");
+    }
+    else if(status === "o"){
+        $("#turnTips").addClass("oStatus");
+    }
+}
 
 
 function bindEvents(){
     var _option = doc.getElementById('optionbg');
 
+
+
     var _startWithType = function(type){
         _option.style.display = 'none';
         options.roles.p2.type = type;
+
 
         if(type == 'net-friend' && SOCKET == undefined){
             var xhr = new XMLHttpRequest();
@@ -96,7 +144,7 @@ function bindEvents(){
                     SOCKET.on('next',function(data){
                         console.log(data);
                         putChess(data.type,data.coord);
-                        render();
+                        render("now");
                     });
                     start();
                 }
@@ -105,19 +153,20 @@ function bindEvents(){
             xhr.send(null);  
             return;          
         }
-        start();
+        initBattleShow(start);
+        
     }
 
     doc.getElementById('single').addEventListener(clickEvent,function(){
+        initBattleHidden();
 
         singleBtn.setO(function(){
 
 
 
-
             setTimeout(function(){
                 _startWithType('computer');
-            }, 300)
+            }, 100)
             
         })
 
@@ -135,13 +184,14 @@ function bindEvents(){
     },false);
 
     doc.getElementById('multi').addEventListener(clickEvent,function(){
+        initBattleHidden();
 
 
 
         multiBtn.setO(function(){
             setTimeout(function(){
                 _startWithType('people');
-            }, 300)
+            }, 100)
         })
 
 
@@ -176,6 +226,37 @@ function bindEvents(){
     },false);
 
 
+    $("#back").bind(clickEvent, function(){
+        initBattleHidden(function(){
+            _option.style.display = 'block';
+            setTimeout(function(){
+
+                if(options.roles.p2.type === "computer"){
+                    showMulti();
+
+                    $("#single .btnTips").removeClass("dismiss");
+                    singleBtn.setW();
+                }
+                else{
+                    showSingle();
+
+                    $("#multi .btnTips").removeClass("dismiss");
+                    multiBtn.setW();
+                }
+                setTimeout(function(){
+                    showSplit();
+                }, 100);
+                setTimeout(function(){
+                    showSound();
+                }, 200);
+            }, 100)
+
+
+        });
+
+        
+
+    })
 
     
 
@@ -185,6 +266,8 @@ function bindEvents(){
 
     Board.addEventListener(clickEvent,function(e){
         if(sta.turn.type !== 'people'){return false;}
+
+
         var array = sta.array;
 
         var _target = e.target;
@@ -259,6 +342,12 @@ function startTiming(){
     step();
 }
 
+
+function checkTipsStatusByTurn(){
+    setBarStatus(sta.turn.value);
+    console.log("set once")
+}
+
 //开局
 function start(){
     sta.step = 0;
@@ -271,12 +360,15 @@ function start(){
 
     if(sta.turn.type == 'people'){
         console.log('wait for start!');
+
+        render("first");
     }else if(sta.turn.type == 'computer'){
         comTurn();
+
+        render("now");
     }else if(sta.turn.type == 'net-friend'){
         console.log('wait your net net-friend');
     }
-    render();
 }
 
 
@@ -418,7 +510,7 @@ function comTurn(){
 function putChess(type,coord){
     var array = sta.array;
     array[coord.x][coord.y] = type;
-    next();
+    next(checkTipsStatusByTurn);
     sta.history.push(coord);
 }
 
@@ -508,59 +600,65 @@ function findPuts(value){
     return wight_array;
 }
 
-function render(){
+function render(text){
+    var callback = checkTipsStatusByTurn();
 
+    setBarTips(text);
     for(var i=0;i<sta.array.length;i++){
         for(var j=0;j<sta.array[i].length;j++){
-            var _chess = chesses[i*3 + j];
+            var _chess = chesses[i*3 + j],
+                n = i*3 + j;
             if(sta.array[i][j] !== null ){
                 if(sta.array[i][j] == 'o'){
-                    _chess.setO();
+                    _chess.setO( n >= 8 ? callback : null);
             	}else{
-                    _chess.setX();
+                    _chess.setX( n >= 8 ? callback : null);
             	}
             }else{
-                _chess.setW();
+                _chess.setW( n >= 8 ? callback : null);
             }
         }
     }
 
 }
 
-function next(){
+function next(callback){
     sta.step++;
-    render();
     var finish = judgeWin();
     if(!!finish){
         //game over and start again!
         setTimeout(function(){
             sta.round++;
             start();
-        },500)
-        return;
+        },2000);
+
+        render("win :)");
+    }
+    else{
+        if(sta.step >= 6){
+            var _coord = sta.history[sta.step -6];
+            var _chess = chesses[_coord.x*3 + _coord.y];
+            _chess.rock();
+        }
+
+        //当步骤为8的时候 移除一个。
+        if(sta.step >= 7){
+            var _coord = sta.history[sta.step-7];
+            sta.array[_coord.x][_coord.y] = null;
+        }
+
+        sta.turn = sta.turn == options.roles.p1 ?  options.roles.p2 :  options.roles.p1;
+
+        if(sta.turn.type == 'computer'){
+            setTimeout(function(){
+                 comTurn();
+            },500);
+        }       
+
+        render("now"); 
     }
 
-    if(sta.step >= 6){
-        var _coord = sta.history[sta.step -6];
-        var _chess = chesses[_coord.x*3 + _coord.y];
-        _chess.rock();
-    }
 
-    //当步骤为8的时候 移除一个。
-    if(sta.step >= 7){
-        var _coord = sta.history[sta.step-7];
-        sta.array[_coord.x][_coord.y] = null;
-        render();
-    }
-
-    sta.turn = sta.turn == options.roles.p1 ?  options.roles.p2 :  options.roles.p1;
-
-    if(sta.turn.type == 'computer'){
-        setTimeout(function(){
-             comTurn();
-        },500);
-    }
-    // render();
 }
 
 //判断是否已经有人赢了
@@ -615,6 +713,8 @@ function judgeWin(){
 
 soundManager.onready(function() {
     initChess();
+
+    initBattleHidden();
 });
 
 // document.addEventListener('deviceready', init, false);

@@ -29,15 +29,14 @@
 .board{
 	width: 640px;
 	height: 640px;
-	position: relative;
+	position: absolute;
 	overflow: hidden;
 	line-height: 0px;
 	-webkit-transform-style: preserve-3d;
 	-webkit-perspective: 99999999px;
-	top: 50%;
-	margin-top: -320px;
+	bottom: 0px;
 }
-}
+
 
 /** <--------- anim frame    **/
 @-webkit-keyframes flash {
@@ -304,16 +303,30 @@
 	background-color: #FA8181;
 	-webkit-transform: translateX(50px) translateZ(-28.8676px) rotateY(120deg);
 }
+
+.chess .faceO.blank{
+	background-image: none;
+	background-color:  #fff;
+}
 .chess .faceX{
 	background-image: url(../img/sprite.png);
 	background-position:  -214px 0px;
 	background-color:  #74C3FF;
 	-webkit-transform: translateX(-50px) translateZ(-28.8676px) rotateY(240deg);
 }
+.chess .faceX.blank{
+	background-image: none;
+	background-color:  #fff;
+}
 .chess .faceW{
 	background-image: url(../img/sprite.png);
 	background-position:  0px -214px;
-	background-color:  #f4f4f4;
+	background-color:  #f6f6f6;
+}
+
+.chess .faceW.blank{
+	background-image: none;
+	background-color:  #fff;
 }
 
 
@@ -436,24 +449,43 @@
 
 /**  <--------- big tips **/
 .bigTips {
+	-webkit-transform: translateX(-640px);
+	-webkit-transition: -webkit-transform 500ms;
 	font-size: 100px;
 	font-weight: 800;
 	line-height: 214px;
 	height: 214px;
+	position: absolute;
+	top:85px;
 }
-.bigTips.oColor{
-	color:#FA8181;
+.bigTips.show{
+	-webkit-transform: translateX(0px);
 }
-.bigTips.xColor{
-	color:#74c3ff;
+
+.bigTips .turnArrow{
+	display: block;
+	width:40px;
+	height:40px;
+	bottom: -20px;
+	left: 50%;
+	margin-left:-20px;
+	position: absolute;
+	background-image: url(../img/sprite.png);
+}
+.oArrow.turnArrow{
+	background-position:-40px -1072px;
+}
+.xArrow.turnArrow{
+	background-position:0px -1072px;
 }
 
 .bigTips .tipsIcon{
 	background-image: url(../img/sprite.png);
-	display: inline-block;
+	display: none;
 	width: 214px;
 	height: 214px;
 	float: left;
+	position: relative;
 }
 .bigTips .oTips{
 	
@@ -462,6 +494,36 @@
 .bigTips .xTips{
 	
 	background-position: -214px -856px;
+}
+.bigTips.xStatus {
+	color: #74c3ff;
+}
+
+.bigTips.oStatus {
+	color: #FA8181;
+}
+.bigTips.xStatus .xTips{
+	display: block;
+}
+.bigTips.oStatus .oTips{
+	display: block;
+}
+
+
+.back{
+	position:absolute;
+	-webkit-transform:translateX(-160px);
+	-webkit-transition:-webkit-transform 500ms;
+	background: url(../img/sprite.png) -80px -1072px;
+	opacity: 0.3;
+	top:20px;
+	left: 58px;
+	width:95px;
+	height: 65px;
+}
+.back.show{
+	-webkit-transform:translateX(0px);
+	opacity: 1;
 }
 
 /** big tips ------> **/

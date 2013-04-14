@@ -7,7 +7,7 @@ var Chess = Chess || {};
     exports.first = null;      //the first Chess in the square
     exports.last = null;   //the last Chess in the square
     exports.chesses = [];
-    "setX setO setW shake rock stopRock".split(" ").forEach(function(name){
+    "setX setO setW shake rock stopRock setXBlank setXNormal setWBlank setWNormal setOBlank setONormal".split(" ").forEach(function(name){
         exports[name] = function(){
             exports.chesses.forEach(function(chess){
                 chess[name]();
@@ -52,6 +52,10 @@ var Chess = Chess || {};
             }
             this.shadowElem = $(this.elem).find(".shadow").get(0);
             this.rotateElem = $(this.elem).find(".rotate").get(0);
+            this.xElem = $(this.elem).find(".faceX").get(0);
+            this.oElem = $(this.elem).find(".faceO").get(0);
+            this.wElem = $(this.elem).find(".faceW").get(0);
+
 
             $(this.elem).on("webkitTransitionEnd", function(){
                 that._transitionend();
@@ -81,10 +85,32 @@ var Chess = Chess || {};
             $(this.rotateElem)
             .removeClass("infinite");
         },
+        setXBlank:function(){
+            $(this.xElem).addClass("blank");
+        },
+        setXNormal:function(){
+            $(this.xElem).removeClass("blank");
+            console.log("setXNormal");
+        },
+        setWBlank:function(){
+            $(this.wElem).addClass("blank");
+        },
+        setWNormal:function(){
+            $(this.wElem).removeClass("blank");
+        },
+        setOBlank:function(){
+            $(this.oElem).addClass("blank");
+        },
+        setONormal:function(){
+            $(this.oElem).removeClass("blank");
+        },
         setX:function(callback){
             if(!(this.status === "x")){
                 this.showShadow();
                 this.clearAnim();
+            }
+            else{
+                callback && callback();
             }
             if(this.status === "w"){
                 $(this.elem).addClass("w2x");
@@ -101,6 +127,9 @@ var Chess = Chess || {};
                 this.showShadow();
                 this.clearAnim();
             }
+            else{
+                callback && callback();
+            }
             if(this.status === "w"){
                 $(this.elem).addClass("w2o");
             }
@@ -115,6 +144,9 @@ var Chess = Chess || {};
             if(!(this.status === "w")){
                 this.showShadow();
                 this.clearAnim();
+            }
+            else{
+                callback && callback();
             }
             if(this.status === "x"){
                 $(this.elem).addClass("x2w");
