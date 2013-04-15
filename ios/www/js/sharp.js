@@ -617,11 +617,12 @@ function next(callback){
     sta.step++;
     var finish = judgeWin();
     if(!!finish){
-        game over and start again!
+        // game over and start again!
         setTimeout(function(){
             sta.round++;
             start();
         },2000);
+
         render("win :)");
     }
     else{
