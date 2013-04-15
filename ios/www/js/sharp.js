@@ -617,14 +617,12 @@ function next(callback){
     sta.step++;
     var finish = judgeWin();
     if(!!finish){
-        //game over and start again!
+        game over and start again!
         setTimeout(function(){
             sta.round++;
             start();
         },2000);
-
-        
-        ("win :)");
+        render("win :)");
     }
     else{
         if(sta.step >= 6){
@@ -705,8 +703,6 @@ soundManager.onready(function() {
     initChess();
     initBattleHidden();
 });
-
-
 
 // document.addEventListener('deviceready', init, false);
 
