@@ -21,6 +21,9 @@ var img = [],
         'cow'
     ];
 
+// 监测是否已经准备好了？
+var ready;
+
 //go with HTML5 audio
 soundManager.useHTML5Audio = true;
 soundManager.preferFlash = false;
@@ -48,22 +51,16 @@ var options = {
 
 
 //棋盘的状态
-var sta = {
-    step : 0,
-    round : 0,
-    history : [],
-    turn : options.roles.p1,
-    offensive : options.roles.p1,
-    array : [[null,null,null],[null,null,null],[null,null,null]],
-    timer : 0,
-    times : 0
-};
+var sta;
 
 //程序初始化
 function init(){
+    resetSta();
     bindEvents();
     startTiming();
 }
+
+
 
 function initBattleHidden(callback){
     $("#turnTips").removeClass("show");
@@ -89,13 +86,13 @@ function initBattleShow(callback){
             chess.setW(function(){
                 chess.setXNormal();
                 if(i >= chesses.length -1){
+                    ready = true;
                     callback && callback();
                 }
             });    
         }, i * 100)
     })
 }
-
 
 function setBarTips(text){
     $("#turnTips .tips").html(text);
@@ -146,6 +143,7 @@ function bindEvents(){
     doc.getElementById('single').addEventListener(clickEvent,function(e){
 
         doc.getElementById('board').style.display = '';
+        ready = false;
         e.stopPropagation();
 
         initBattleHidden();
@@ -172,9 +170,8 @@ function bindEvents(){
 
     // 点击双人模式
     doc.getElementById('multi').addEventListener(clickEvent,function(e){
-
+        ready = false;
         doc.getElementById('board').style.display = '';
-
         initBattleHidden();
 
         multiBtn.setO(function(){
@@ -196,11 +193,6 @@ function bindEvents(){
         
     },false);
 
-
-
-
-
-
     doc.getElementById('sound').addEventListener(clickEvent,function(e){
         e.stopPropagation();
 
@@ -218,6 +210,7 @@ function bindEvents(){
 
 
     $("#back").bind(clickEvent, function(){
+        resetSta();
         initBattleHidden(function(){
             doc.getElementById('board').style.display = 'none';
             _option.style.display = 'block';
@@ -248,6 +241,8 @@ function bindEvents(){
     
 
     Board.addEventListener(clickEvent,function(e){
+        // 没有准备好的时候禁止点击
+        if(!ready){return false;}
         if(sta.turn.type !== 'people'){return false;}
 
         console.log(e.target.nodeName + ',' + e.target.className);
@@ -280,9 +275,23 @@ function bindEvents(){
         if(!!SOCKET){
             SOCKET.emit('next', { type: sta.turn.value , coord : {x:_v1,y:_v2} });
         }
-
         putChess(sta.turn.value,{x:_v1,y:_v2});
     },false);
+}
+
+
+// 重置sta
+function resetSta(){
+    sta = {
+        step : 0,
+        round : 0,
+        history : [],
+        turn : options.roles.p1,
+        offensive : options.roles.p1,
+        array : [[null,null,null],[null,null,null],[null,null,null]],
+        timer : 0,
+        times : 0
+    };
 }
 
 //开始计时
@@ -309,14 +318,14 @@ function startTiming(){
             clearTimeout;
     })();
 
-    var start = Date.now();
+    var _start = Date.now();
 
     var step = function(){
         var _now = Date.now();
 
-        if(_now - start > 1000){
+        if(_now - _start > 1000){
             sta.timer++;
-            start = _now;
+            _start = _now;
             document.getElementById('infos').innerHTML = sta.timer;
         }
         nextFrame(step);
@@ -440,7 +449,6 @@ function initChess(){
         singleBtn = Chess.create({
             kind:"single",
             parent:$("#singleHold").get(0)
-
         });
         
         multiBtn = Chess.create({
@@ -615,7 +623,8 @@ function next(callback){
             start();
         },2000);
 
-        render("win :)");
+        
+        ("win :)");
     }
     else{
         if(sta.step >= 6){
@@ -640,8 +649,6 @@ function next(callback){
 
         render("now"); 
     }
-
-
 }
 
 //判断是否已经有人赢了
@@ -696,9 +703,10 @@ function judgeWin(){
 
 soundManager.onready(function() {
     initChess();
-
     initBattleHidden();
 });
+
+
 
 // document.addEventListener('deviceready', init, false);
 

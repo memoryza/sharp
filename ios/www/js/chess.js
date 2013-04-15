@@ -90,7 +90,7 @@ var Chess = Chess || {};
         },
         setXNormal:function(){
             $(this.xElem).removeClass("blank");
-            console.log("setXNormal");
+            // console.log("setXNormal");
         },
         setWBlank:function(){
             $(this.wElem).addClass("blank");
