@@ -63,19 +63,6 @@ var sta = {
 function init(){
     bindEvents();
     startTiming();
-    isShowReview();
-}
-
-function isShowReview(){
-    var playedTimes = ~~localStorage.getItem('PLAYEDTIMES') || 0;
-    playedTimes++;
-    localStorage.setItem('PLAYEDTIMES',playedTimes); 
-    if(playedTimes == 30){
-
-        //alert('you should review our app!!');
-
-
-    }
 }
 
 function initBattleHidden(callback){
@@ -128,8 +115,6 @@ function setBarStatus(status){
 function bindEvents(){
     var _option = doc.getElementById('optionbg');
 
-
-
     var _startWithType = function(type){
         _option.style.display = 'none';
         options.roles.p2.type = type;
@@ -157,13 +142,15 @@ function bindEvents(){
         
     }
 
-    doc.getElementById('single').addEventListener(clickEvent,function(){
+    // 点击单人模式
+    doc.getElementById('single').addEventListener(clickEvent,function(e){
+
+        doc.getElementById('board').style.display = '';
+        e.stopPropagation();
+
         initBattleHidden();
 
         singleBtn.setO(function(){
-
-
-
             setTimeout(function(){
                 _startWithType('computer');
             }, 100)
@@ -183,17 +170,18 @@ function bindEvents(){
         
     },false);
 
-    doc.getElementById('multi').addEventListener(clickEvent,function(){
+    // 点击双人模式
+    doc.getElementById('multi').addEventListener(clickEvent,function(e){
+
+        doc.getElementById('board').style.display = '';
+
         initBattleHidden();
-
-
 
         multiBtn.setO(function(){
             setTimeout(function(){
                 _startWithType('people');
             }, 100)
         })
-
 
         hideSound();
         setTimeout(function(){
@@ -210,7 +198,12 @@ function bindEvents(){
 
 
 
-    doc.getElementById('sound').addEventListener(clickEvent,function(){
+
+
+
+    doc.getElementById('sound').addEventListener(clickEvent,function(e){
+        e.stopPropagation();
+
         if(state.sound === "on"){
             soundBtn.setX();
             $("#sound .btnTips").html("Sound off");
@@ -221,19 +214,16 @@ function bindEvents(){
             $("#sound .btnTips").html("Sound on");
             state.sound = "on";
         }
-
-        
     },false);
 
 
     $("#back").bind(clickEvent, function(){
         initBattleHidden(function(){
+            doc.getElementById('board').style.display = 'none';
             _option.style.display = 'block';
             setTimeout(function(){
-
                 if(options.roles.p2.type === "computer"){
                     showMulti();
-
                     $("#single .btnTips").removeClass("dismiss");
                     singleBtn.setW();
                 }
@@ -253,23 +243,17 @@ function bindEvents(){
 
 
         });
-
-        
-
     })
 
     
 
-    // doc.getElementById('option_3').addEventListener(clickEvent,function(){
-    //     _startWithType('net-friend');
-    // },false);
-
     Board.addEventListener(clickEvent,function(e){
         if(sta.turn.type !== 'people'){return false;}
 
+        console.log(e.target.nodeName + ',' + e.target.className);
+
 
         var array = sta.array;
-
         var _target = e.target;
         var x,y;
         e = e.changedTouches ? e.changedTouches[0] : e;
@@ -299,12 +283,11 @@ function bindEvents(){
 
         putChess(sta.turn.value,{x:_v1,y:_v2});
     },false);
-
 }
-
 
 //开始计时
 function startTiming(){
+    return;
     var nextFrame = (function () {
         return window.requestAnimationFrame ||
             window.webkitRequestAnimationFrame ||
