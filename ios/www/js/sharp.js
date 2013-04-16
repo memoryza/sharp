@@ -19,6 +19,9 @@ var img = [],
     sound = [],
     soundNames = "s1 s2 s3 s4 s5 s6 s7 s8".split(" ");
 
+// 监测是否已经准备好了？
+var ready;
+
 //go with HTML5 audio
 soundManager.useHTML5Audio = true;
 soundManager.preferFlash = false;
@@ -46,35 +49,16 @@ var options = {
 
 
 //棋盘的状态
-var sta = {
-    step : 0,
-    round : 0,
-    history : [],
-    turn : options.roles.p1,
-    offensive : options.roles.p1,
-    array : [[null,null,null],[null,null,null],[null,null,null]],
-    timer : 0,
-    times : 0
-};
+var sta;
 
 //程序初始化
 function init(){
+    resetSta();
     bindEvents();
     startTiming();
-    isShowReview();
 }
 
-function isShowReview(){
-    var playedTimes = ~~localStorage.getItem('PLAYEDTIMES') || 0;
-    playedTimes++;
-    localStorage.setItem('PLAYEDTIMES',playedTimes); 
-    if(playedTimes == 30){
 
-        //alert('you should review our app!!');
-
-
-    }
-}
 
 function initBattleHidden(callback){
     $("#turnTips").removeClass("show");
@@ -100,13 +84,13 @@ function initBattleShow(callback){
             chess.setW(function(){
                 chess.setXNormal();
                 if(i >= chesses.length -1){
+                    ready = true;
                     callback && callback();
                 }
             });    
         }, i * 100)
     })
 }
-
 
 function setBarTips(text){
     $("#turnTips .tips").html(text);
@@ -125,8 +109,6 @@ function setBarStatus(status){
 
 function bindEvents(){
     var _option = doc.getElementById('optionbg');
-
-
 
     var _startWithType = function(type){
         _option.style.display = 'none';
@@ -155,13 +137,16 @@ function bindEvents(){
         
     }
 
-    doc.getElementById('single').addEventListener(clickEvent,function(){
+    // 点击单人模式
+    doc.getElementById('single').addEventListener(clickEvent,function(e){
+
+        doc.getElementById('board').style.display = '';
+        ready = false;
+        e.stopPropagation();
+
         initBattleHidden();
 
         singleBtn.setO(function(){
-
-
-
             setTimeout(function(){
                 _startWithType('computer');
             }, 100)
@@ -181,17 +166,17 @@ function bindEvents(){
         
     },false);
 
-    doc.getElementById('multi').addEventListener(clickEvent,function(){
+    // 点击双人模式
+    doc.getElementById('multi').addEventListener(clickEvent,function(e){
+        ready = false;
+        doc.getElementById('board').style.display = '';
         initBattleHidden();
-
-
 
         multiBtn.setO(function(){
             setTimeout(function(){
                 _startWithType('people');
             }, 100)
         })
-
 
         hideSound();
         setTimeout(function(){
@@ -206,9 +191,9 @@ function bindEvents(){
         
     },false);
 
+    doc.getElementById('sound').addEventListener(clickEvent,function(e){
+        e.stopPropagation();
 
-
-    doc.getElementById('sound').addEventListener(clickEvent,function(){
         if(state.sound === "on"){
             soundBtn.setX();
             $("#sound .btnTips").html("Sound off");
@@ -219,19 +204,17 @@ function bindEvents(){
             $("#sound .btnTips").html("Sound on");
             state.sound = "on";
         }
-
-        
     },false);
 
 
     $("#back").bind(clickEvent, function(){
+        resetSta();
         initBattleHidden(function(){
+            doc.getElementById('board').style.display = 'none';
             _option.style.display = 'block';
             setTimeout(function(){
-
                 if(options.roles.p2.type === "computer"){
                     showMulti();
-
                     $("#single .btnTips").removeClass("dismiss");
                     singleBtn.setW();
                 }
@@ -251,23 +234,19 @@ function bindEvents(){
 
 
         });
-
-        
-
     })
 
     
 
-    // doc.getElementById('option_3').addEventListener(clickEvent,function(){
-    //     _startWithType('net-friend');
-    // },false);
-
     Board.addEventListener(clickEvent,function(e){
+        // 没有准备好的时候禁止点击
+        if(!ready){return false;}
         if(sta.turn.type !== 'people'){return false;}
+
+        console.log(e.target.nodeName + ',' + e.target.className);
 
 
         var array = sta.array;
-
         var _target = e.target;
         var x,y;
         e = e.changedTouches ? e.changedTouches[0] : e;
@@ -294,15 +273,28 @@ function bindEvents(){
         if(!!SOCKET){
             SOCKET.emit('next', { type: sta.turn.value , coord : {x:_v1,y:_v2} });
         }
-
         putChess(sta.turn.value,{x:_v1,y:_v2});
     },false);
-
 }
 
 
+// 重置sta
+function resetSta(){
+    sta = {
+        step : 0,
+        round : 0,
+        history : [],
+        turn : options.roles.p1,
+        offensive : options.roles.p1,
+        array : [[null,null,null],[null,null,null],[null,null,null]],
+        timer : 0,
+        times : 0
+    };
+}
+
 //开始计时
 function startTiming(){
+    return;
     var nextFrame = (function () {
         return window.requestAnimationFrame ||
             window.webkitRequestAnimationFrame ||
@@ -324,14 +316,14 @@ function startTiming(){
             clearTimeout;
     })();
 
-    var start = Date.now();
+    var _start = Date.now();
 
     var step = function(){
         var _now = Date.now();
 
-        if(_now - start > 1000){
+        if(_now - _start > 1000){
             sta.timer++;
-            start = _now;
+            _start = _now;
             document.getElementById('infos').innerHTML = sta.timer;
         }
         nextFrame(step);
@@ -455,7 +447,6 @@ function initChess(){
         singleBtn = Chess.create({
             kind:"single",
             parent:$("#singleHold").get(0)
-
         });
         
         multiBtn = Chess.create({
@@ -624,7 +615,7 @@ function next(callback){
     sta.step++;
     var finish = judgeWin();
     if(!!finish){
-        //game over and start again!
+        // game over and start again!
         setTimeout(function(){
             sta.round++;
             start();
@@ -655,8 +646,6 @@ function next(callback){
 
         render("now"); 
     }
-
-
 }
 
 //判断是否已经有人赢了
@@ -711,7 +700,6 @@ function judgeWin(){
 
 soundManager.onready(function() {
     initChess();
-
     initBattleHidden();
 });
 
