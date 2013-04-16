@@ -108,6 +108,7 @@ var Chess = Chess || {};
             if(!(this.status === "x")){
                 this.showShadow();
                 this.clearAnim();
+                sound.s4.play();
             }
             else{
                 callback && callback();
@@ -126,6 +127,7 @@ var Chess = Chess || {};
             if(!(this.status === "o")){
                 this.showShadow();
                 this.clearAnim();
+                sound.s4.play();
             }
             else{
                 callback && callback();
@@ -144,6 +146,7 @@ var Chess = Chess || {};
             if(!(this.status === "w")){
                 this.showShadow();
                 this.clearAnim();
+                sound.s4.play();
             }
             else{
                 callback && callback();

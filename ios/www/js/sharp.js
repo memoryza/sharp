@@ -17,9 +17,7 @@ var img = [],
         "sprite"
     ],
     sound = [],
-    soundNames = [
-        'cow'
-    ];
+    soundNames = "s1 s2 s3 s4 s5 s6 s7 s8".split(" ");
 
 //go with HTML5 audio
 soundManager.useHTML5Audio = true;
