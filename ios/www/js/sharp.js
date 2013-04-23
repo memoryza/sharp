@@ -58,10 +58,8 @@ var sta;
 function init(){
     resetSta();
     bindEvents();
-    startTiming();
+    // startTiming();
 }
-
-
 
 function initBattleHidden(callback){
     $("#turnTips").removeClass("show");
@@ -101,7 +99,7 @@ function calcWinRace(){
         return 50;
     }
     else{
-        return Math.round((options.roles.p1.win/options.roles.p2.win + options.roles.p1.win)*100);
+        return Math.round((options.roles.p2.win/(options.roles.p2.win + options.roles.p1.win))*100);
     }
                 
 
@@ -119,13 +117,6 @@ function setBarStatus(status){
     else{
         $("#turnTips .scorebar").addClass("none");
     }
-    // $("#turnTips").removeClass("xStatus oStatus");
-    // if(status === "x"){
-    //     $("#turnTips").addClass("xStatus");
-    // }
-    // else if(status === "o"){
-    //     $("#turnTips").addClass("oStatus");
-    // }
 }
 
 
@@ -263,6 +254,9 @@ function bindEvents(){
                         // if(!ready){return false;}
             if(sta.turn.type !== 'people'){return false;}
 
+            // 当棋局完成后禁止点击
+            if(!!sta.roundOver){return;}
+
             var array = sta.array;
             var _target = e.target;
             var w,h;
@@ -278,11 +272,10 @@ function bindEvents(){
             if(!!SOCKET){
                 SOCKET.emit('next', { type: sta.turn.value , coord : {x:_v1,y:_v2} });
             }
-            
             touchSwitch = false;
             putChess(sta.turn.value,{x:_v1,y:_v2});
-
         }
+
     });
 }
 
@@ -292,6 +285,7 @@ function resetSta(){
     sta = {
         step : 0,
         round : 0,
+        roundOver : false,
         history : [],
         turn : options.roles.p1,
         offensive : options.roles.p1,
@@ -301,47 +295,6 @@ function resetSta(){
     };
 }
 
-//开始计时
-function startTiming(){
-    return;
-    var nextFrame = (function () {
-        return window.requestAnimationFrame ||
-            window.webkitRequestAnimationFrame ||
-            window.mozRequestAnimationFrame ||
-            window.oRequestAnimationFrame ||
-            window.msRequestAnimationFrame ||
-            function (callback) {
-                return setTimeout(callback, 1);
-            };
-    })();
-
-    var cancelFrame = (function () {
-        return window.cancelRequestAnimationFrame ||
-            window.webkitCancelAnimationFrame ||
-            window.webkitCancelRequestAnimationFrame ||
-            window.mozCancelRequestAnimationFrame ||
-            window.oCancelRequestAnimationFrame ||
-            window.msCancelRequestAnimationFrame ||
-            clearTimeout;
-    })();
-
-    var _start = Date.now();
-
-    var step = function(){
-        var _now = Date.now();
-
-        if(_now - _start > 1000){
-            sta.timer++;
-            _start = _now;
-            document.getElementById('infos').innerHTML = sta.timer;
-        }
-        nextFrame(step);
-    };
-
-    step();
-}
-
-
 function checkTipsStatusByTurn(){
     setBarStatus(sta.turn.value);
     console.log("set once")
@@ -350,6 +303,7 @@ function checkTipsStatusByTurn(){
 //开局
 function start(){
     sta.step = 0;
+    sta.roundOver = false;
     sta.array = [[null,null,null],[null,null,null],[null,null,null]];
     sta.offensive = sta.round % 2 == 0 ? options.roles.p1 : options.roles.p2;
     sta.turn = sta.offensive;
@@ -363,7 +317,6 @@ function start(){
         render("first");
     }else if(sta.turn.type == 'computer'){
         comTurn();
-
         render("now");
     }else if(sta.turn.type == 'net-friend'){
         console.log('wait your net net-friend');
@@ -627,16 +580,18 @@ function render(text){
 }
 
 function next(callback){
+    if(!!sta.roundOver){return;}
     sta.step++;
     var finish = judgeWin();
     if(!!finish){
         // game over and start again!
+
         setTimeout(function(){
             sta.round++;
             start();
-
         },2000);
 
+        sta.roundOver = true;
         render("win :)");
     }
     else{
@@ -703,7 +658,7 @@ function judgeWin(){
     //当不是无尽模式的时候 还要考虑平局的情况。
     if(hasWiner){
     	finished = true;
-        if(options.roles.p1.type === winnerType){
+        if(options.roles.p1.value === winnerType){
             options.roles.p1.win++;
             options.roles.p2.lose++;
         }else{
