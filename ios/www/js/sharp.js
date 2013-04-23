@@ -20,7 +20,7 @@ var img = [],
     soundNames = "";
 
 // 监测是否已经准备好了？
-var ready;
+// var ready;
 
 //go with HTML5 audio
 soundManager.useHTML5Audio = true;
@@ -86,7 +86,7 @@ function initBattleShow(callback){
             chess.setW(function(){
                 chess.setXNormal();
                 if(i >= chesses.length -1){
-                    ready = true;
+                    // ready = true;
                     callback && callback();
                 }
             });    
@@ -159,143 +159,111 @@ function bindEvents(){
     }
 
     // 点击单人模式
-    doc.getElementById('single').addEventListener(clickEvent,function(e){
+    iTouch({
+        element   : doc.getElementById('single'),
+        click     : function(e,x,y){
+                        doc.getElementById('board').style.display = '';
+                        initBattleHidden();
 
-        doc.getElementById('board').style.display = '';
-        ready = false;
-        e.stopPropagation();
+                        singleBtn.setO(function(){
+                            setTimeout(function(){
+                                _startWithType('computer');
+                            }, 100)
+                            
+                        })
 
-        initBattleHidden();
+                        setTimeout(function(){
+                            hideSplit();
+                        }, 100);
+                        setTimeout(function(){
+                            hideMulti();
+                        }, 200);
 
-        singleBtn.setO(function(){
-            setTimeout(function(){
-                _startWithType('computer');
-            }, 100)
-            
-        })
-
-        hideSound();
-        setTimeout(function(){
-            hideSplit();
-        }, 100);
-        setTimeout(function(){
-            hideMulti();
-        }, 200);
-
-
-        $(this).find(".btnTips").addClass("dismiss");
-        
-    },false);
+                        doc.querySelector('#single .btnTips').classList.add('dismiss');
+                    }
+    });
 
     // 点击双人模式
-    doc.getElementById('multi').addEventListener(clickEvent,function(e){
-        ready = false;
-        doc.getElementById('board').style.display = '';
-        initBattleHidden();
+    iTouch({
+        element   : doc.getElementById('multi'),
+        click     : function(e,x,y){
+                        doc.getElementById('board').style.display = '';
+                        initBattleHidden();
 
-        multiBtn.setO(function(){
-            setTimeout(function(){
-                _startWithType('people');
-            }, 100)
-        })
+                        multiBtn.setO(function(){
+                            setTimeout(function(){
+                                _startWithType('people');
+                            }, 100)
+                        });
 
-        hideSound();
-        setTimeout(function(){
-            hideSplit();
-        }, 100);
-        setTimeout(function(){
-            hideSingle();
-        }, 200);
+                        setTimeout(function(){
+                            hideSplit();
+                        }, 100);
+                        setTimeout(function(){
+                            hideSingle();
+                        }, 200);
 
-        
-        $(this).find(".btnTips").addClass("dismiss");
-        
-    },false);
-
-    doc.getElementById('sound').addEventListener(clickEvent,function(e){
-        e.stopPropagation();
-
-        if(state.sound === "on"){
-            soundBtn.setX();
-            $("#sound .btnTips").html("Sound off");
-            state.sound = "off";
-        }
-        else if(state.sound === "off"){
-            soundBtn.setW();
-            $("#sound .btnTips").html("Sound on");
-            state.sound = "on";
-        }
-    },false);
+                        doc.querySelector('#multi .btnTips').classList.add('dismiss');
+                    }
+    });
 
 
-    $("#back").bind(clickEvent, function(){
-        resetSta();
-        initBattleHidden(function(){
-            doc.getElementById('board').style.display = 'none';
-            _option.style.display = 'block';
-            setTimeout(function(){
-                if(options.roles.p2.type === "computer"){
-                    showMulti();
-                    $("#single .btnTips").removeClass("dismiss");
-                    singleBtn.setW();
-                }
-                else{
-                    showSingle();
+    // 返回按钮
+    iTouch({
+        element   : doc.getElementById('back'),
+        click     : function(e,x,y){
+                        resetSta();
+                        initBattleHidden(function(){
+                            doc.getElementById('board').style.display = 'none';
+                            _option.style.display = 'block';
+                            setTimeout(function(){
+                                if(options.roles.p2.type === "computer"){
+                                    showMulti();
+                                    $("#single .btnTips").removeClass("dismiss");
+                                    singleBtn.setW();
+                                }
+                                else{
+                                    showSingle();
 
-                    $("#multi .btnTips").removeClass("dismiss");
-                    multiBtn.setW();
-                }
-                setTimeout(function(){
-                    showSplit();
-                }, 100);
-                setTimeout(function(){
-                    showSound();
-                }, 200);
-            }, 100)
-
-
-        });
-    })
-
+                                    $("#multi .btnTips").removeClass("dismiss");
+                                    multiBtn.setW();
+                                }
+                                setTimeout(function(){
+                                    showSplit();
+                                }, 100);
+                                setTimeout(function(){
+                                    showSound();
+                                }, 200);
+                            }, 100)
+                        });
+                    }
+    });
     
+    // 棋盘
+    iTouch({
+        element   : Board,
+        click     : function(e,x,y){
+                        // 没有准备好的时候禁止点击
+                        // if(!ready){return false;}
+                        if(sta.turn.type !== 'people'){return false;}
+                        var array = sta.array;
+                        var _target = e.target;
+                        var w,h;
+                        w = Board.clientWidth;
+                        h = Board.clientHeight;
 
-    Board.addEventListener(clickEvent,function(e){
-        // 没有准备好的时候禁止点击
-        if(!ready){return false;}
-        if(sta.turn.type !== 'people'){return false;}
+                        var _v1 = ~~(y/h*3);
+                        var _v2 = ~~(x/w*3);
 
-        console.log(e.target.nodeName + ',' + e.target.className);
+                        if(!array[_v1]){return false;}
+                        if(array[_v1][_v2] !== null){chesses[_v1*3 + _v2].shake(); return false;}
 
-
-        var array = sta.array;
-        var _target = e.target;
-        var x,y;
-        e = e.changedTouches ? e.changedTouches[0] : e;
-        if (e.pageX || e.pageY) { 
-          x = e.pageX;
-          y = e.pageY;
-        }else { 
-          x = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft; 
-          y = e.clientY + document.body.scrollTop + document.documentElement.scrollTop; 
-        } 
-        x -= Board.offsetLeft;
-        y -= Board.offsetTop;
-
-        var w,h;
-        w = Board.clientWidth;
-        h = Board.clientHeight;
-
-        var _v1 = ~~(y/h*3);
-        var _v2 = ~~(x/w*3);
-
-        if(!array[_v1]){return false;}
-        if(array[_v1][_v2] !== null){chesses[_v1*3 + _v2].shake(); return false;}
-
-        if(!!SOCKET){
-            SOCKET.emit('next', { type: sta.turn.value , coord : {x:_v1,y:_v2} });
-        }
-        putChess(sta.turn.value,{x:_v1,y:_v2});
-    },false);
+                        if(!!SOCKET){
+                            SOCKET.emit('next', { type: sta.turn.value , coord : {x:_v1,y:_v2} });
+                        }
+                        putChess(sta.turn.value,{x:_v1,y:_v2});
+                    }
+    });
 }
 
 
