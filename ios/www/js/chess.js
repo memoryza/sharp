@@ -108,6 +108,9 @@ var Chess = Chess || {};
             if(!(this.status === "x")){
                 this.showShadow();
                 this.clearAnim();
+                setTimeout(function(){
+                    callback && callback();
+                }, 800)
             }
             else{
                 callback && callback();
@@ -118,7 +121,7 @@ var Chess = Chess || {};
             else if(this.status === "o"){
                 $(this.elem).addClass("o2x");
             }
-            this.turnoverFn = callback;
+            // this.turnoverFn = callback;
             this.status = "x";
             this._setStaticClass();
         },
@@ -126,6 +129,9 @@ var Chess = Chess || {};
             if(!(this.status === "o")){
                 this.showShadow();
                 this.clearAnim();
+                setTimeout(function(){
+                    callback && callback();
+                }, 800)
             }
             else{
                 callback && callback();
@@ -136,7 +142,7 @@ var Chess = Chess || {};
             else if(this.status === "x"){
                 $(this.elem).addClass("x2o");
             }
-            this.turnoverFn = callback;
+            // this.turnoverFn = callback;
             this.status = "o";
             this._setStaticClass();
         },
@@ -144,6 +150,9 @@ var Chess = Chess || {};
             if(!(this.status === "w")){
                 this.showShadow();
                 this.clearAnim();
+                setTimeout(function(){
+                    callback && callback();
+                }, 800)
             }
             else{
                 callback && callback();
@@ -154,7 +163,7 @@ var Chess = Chess || {};
             else if(this.status === "o"){
                 $(this.elem).addClass("o2w");
             }
-            this.turnoverFn = callback;
+            //this.turnoverFn = callback;
             this.status = "w";
             this._setStaticClass();
         },

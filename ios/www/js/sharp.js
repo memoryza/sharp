@@ -8,6 +8,7 @@ var chesses = [];
 var HOST = 'http://localhost:9090'
 
 var SOCKET,
+    touchSwitch = true;
     state = {
         sound : "on"
     };
@@ -89,7 +90,7 @@ function initBattleShow(callback){
                     // ready = true;
                     callback && callback();
                 }
-            });    
+            }); 
         }, i * 100)
     })
 }
@@ -154,7 +155,12 @@ function bindEvents(){
             xhr.send(null);  
             return;          
         }
-        initBattleShow(start);
+        initBattleShow(function(){
+            //turn on the play switch
+            touchSwitch = true;
+
+            start();
+        });
         
     }
 
@@ -162,6 +168,8 @@ function bindEvents(){
     iTouch({
         element   : doc.getElementById('single'),
         click     : function(e,x,y){
+            if(!touchSwitch) return;
+
                         doc.getElementById('board').style.display = '';
                         initBattleHidden();
 
@@ -180,13 +188,16 @@ function bindEvents(){
                         }, 200);
 
                         doc.querySelector('#single .btnTips').classList.add('dismiss');
-                    }
+
+            touchSwitch = false;
+        }
     });
 
     // 点击双人模式
     iTouch({
         element   : doc.getElementById('multi'),
         click     : function(e,x,y){
+            if(!touchSwitch) return;
                         doc.getElementById('board').style.display = '';
                         initBattleHidden();
 
@@ -204,7 +215,8 @@ function bindEvents(){
                         }, 200);
 
                         doc.querySelector('#multi .btnTips').classList.add('dismiss');
-                    }
+            touchSwitch = false;
+        }
     });
 
 
@@ -212,6 +224,7 @@ function bindEvents(){
     iTouch({
         element   : doc.getElementById('back'),
         click     : function(e,x,y){
+            if(!touchSwitch) return;
                         resetSta();
                         initBattleHidden(function(){
                             doc.getElementById('board').style.display = 'none';
@@ -233,36 +246,43 @@ function bindEvents(){
                                 }, 100);
                                 setTimeout(function(){
                                     showSound();
+                                    touchSwitch = true;
                                 }, 200);
                             }, 100)
                         });
-                    }
+            touchSwitch = false;
+        }       
     });
     
     // 棋盘
     iTouch({
         element   : Board,
         click     : function(e,x,y){
+            if(!touchSwitch) return;
                         // 没有准备好的时候禁止点击
                         // if(!ready){return false;}
-                        if(sta.turn.type !== 'people'){return false;}
-                        var array = sta.array;
-                        var _target = e.target;
-                        var w,h;
-                        w = Board.clientWidth;
-                        h = Board.clientHeight;
+            if(sta.turn.type !== 'people'){return false;}
 
-                        var _v1 = ~~(y/h*3);
-                        var _v2 = ~~(x/w*3);
+            var array = sta.array;
+            var _target = e.target;
+            var w,h;
+            w = Board.clientWidth;
+            h = Board.clientHeight;
 
-                        if(!array[_v1]){return false;}
-                        if(array[_v1][_v2] !== null){chesses[_v1*3 + _v2].shake(); return false;}
+            var _v1 = ~~(y/h*3);
+            var _v2 = ~~(x/w*3);
 
-                        if(!!SOCKET){
-                            SOCKET.emit('next', { type: sta.turn.value , coord : {x:_v1,y:_v2} });
-                        }
-                        putChess(sta.turn.value,{x:_v1,y:_v2});
-                    }
+            if(!array[_v1]){return false;}
+            if(array[_v1][_v2] !== null){chesses[_v1*3 + _v2].shake(); return false;}
+
+            if(!!SOCKET){
+                SOCKET.emit('next', { type: sta.turn.value , coord : {x:_v1,y:_v2} });
+            }
+            
+            touchSwitch = false;
+            putChess(sta.turn.value,{x:_v1,y:_v2});
+
+        }
     });
 }
 
@@ -580,7 +600,12 @@ function findPuts(value){
 }
 
 function render(text){
-    var callback = checkTipsStatusByTurn();
+    checkTipsStatusByTurn();
+    var callback = function(){
+        touchSwitch = true;
+        console.log(touchSwitch)
+    }
+    
 
     setBarTips(text);
     for(var i=0;i<sta.array.length;i++){
