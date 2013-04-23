@@ -110,7 +110,7 @@ var Chess = Chess || {};
                 this.clearAnim();
                 setTimeout(function(){
                     callback && callback();
-                }, 800)
+                }, 500)
             }
             else{
                 callback && callback();

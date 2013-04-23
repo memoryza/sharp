@@ -456,7 +456,7 @@
 	font-weight: 800;
 	line-height: 214px;
 	height: 10px;
-	background: #FA8181;
+	background: #74c3ff;
 	position: absolute;
 	top:0px;
 	width:100%;
@@ -469,7 +469,7 @@
 	-webkit-transition:width 500ms;
 	height: 10px;
 	width: 50%;
-	background: #74c3ff;
+	background: #FA8181;
 }
 
 .bigTips .turnArrow{
@@ -524,16 +524,21 @@
 	position:absolute;
 	-webkit-transform:translateX(-160px);
 	-webkit-transition:-webkit-transform 500ms;
-	background: url(../img/sprite.png) -80px -1072px;
 	opacity: 0.3;
-	top:68px;
-	left: 58px;
+	top: 28px;
+	left: 18px;
 	width:95px;
 	height: 65px;
+	padding:40px;
 }
 .back.show{
 	-webkit-transform:translateX(0px);
 	opacity: 1;
+}
+.iconBack{
+	width:95px;
+	height: 65px;
+	background: url(../img/sprite.png) -80px -1072px;
 }
 
 /** big tips ------> **/

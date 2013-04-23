@@ -99,7 +99,7 @@ function calcWinRace(){
         return 50;
     }
     else{
-        return Math.round((options.roles.p2.win/(options.roles.p2.win + options.roles.p1.win))*100);
+        return Math.round((options.roles.p1.win/(options.roles.p2.win + options.roles.p1.win))*100);
     }
                 
 
