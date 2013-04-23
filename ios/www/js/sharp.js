@@ -127,6 +127,11 @@ function bindEvents(){
         _option.style.display = 'none';
         options.roles.p2.type = type;
 
+        options.roles.p1.win = 0;
+        options.roles.p1.lose = 0;
+        options.roles.p2.win = 0;
+        options.roles.p2.lose = 0;
+
 
         if(type == 'net-friend' && SOCKET == undefined){
             var xhr = new XMLHttpRequest();
@@ -293,6 +298,7 @@ function resetSta(){
         timer : 0,
         times : 0
     };
+
 }
 
 function checkTipsStatusByTurn(){
