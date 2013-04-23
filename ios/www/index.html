@@ -13,18 +13,22 @@
 </head>
 <body>
 	<div id="turnTips" class="bigTips">
-		<span class="tipsIcon oTips"><span class="turnArrow oArrow"></span></span>
-		<span class="tipsIcon xTips"><span class="turnArrow xArrow"></span></span> <span class="tips">first</span></div>
+		<div class="scorebar"></div>
+		<span class="tipsIcon oTips none"><span class="turnArrow oArrow"></span></span>
+		<span class="tipsIcon xTips none"><span class="turnArrow xArrow"></span></span> <span class="tips none">first</span></div>
 	<div class="board" id="board"></div>
 	<div class="back" id="back"></div>
-	<div id="optionbg" class="optionbg">
-		<div class="option" id="option">
-			<div id="single" class="mainBtn"><div id="singleHold" class="hold"></div><div class="btnTips">1 Player</div></div>
-			<div id="multi" class="mainBtn"><div id="multiHold" class="hold"></div><div class="btnTips">2 Player</div></div>
-			<div id="split" class="mainBtn dont"><div class="line"></div></div>
-			<div id="sound" class="mainBtn"><div id="soundHold" class="hold"></div><div class="btnTips">Sound on</div></div>
-		</div>
-	</div>
+	<table id="optionbg" class="optionbg">
+		<tr><td>
+			<div class="option" id="option">
+				<div id="single" class="mainBtn"><div id="singleHold" class="hold"></div><div class="btnTips">1 Player</div></div>
+				<div id="multi" class="mainBtn"><div id="multiHold" class="hold"></div><div class="btnTips">2 Player</div></div>
+				<div id="split" class="mainBtn dont none"><div class="line"></div></div>
+				<div id="sound" class="mainBtn none"><div id="soundHold" class="hold"></div><div class="btnTips">Sound on</div></div>
+			</div>
+		</td></tr>
+
+	</table>
 
 <!-- 	<div id="infos" class="none">0</div>
  -->

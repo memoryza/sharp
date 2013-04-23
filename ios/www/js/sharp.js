@@ -17,7 +17,7 @@ var img = [],
         "sprite"
     ],
     sound = [],
-    soundNames = "s1 s2 s3 s4 s5 s6 s7 s8".split(" ");
+    soundNames = "";
 
 // 监测是否已经准备好了？
 var ready;
@@ -25,6 +25,8 @@ var ready;
 //go with HTML5 audio
 soundManager.useHTML5Audio = true;
 soundManager.preferFlash = false;
+soundManager.defaultOptions.multiShot = true;
+
 
 // 游戏选项
 var options = {
@@ -92,18 +94,37 @@ function initBattleShow(callback){
     })
 }
 
+
+function calcWinRace(){
+    if(options.roles.p2 + options.roles.p1 == 0){
+        return null;
+    }
+    else{
+        return Math.round(options.roles.p1/options.roles.p2 + options.roles.p1);
+    }
+                
+
+}
+
 function setBarTips(text){
     $("#turnTips .tips").html(text);
 }
 
 function setBarStatus(status){
-    $("#turnTips").removeClass("xStatus oStatus");
-    if(status === "x"){
-        $("#turnTips").addClass("xStatus");
+    var race = calcWinRace();
+    if(race != null){
+        $("turnTips .scorebar").removeClass("none").css("width", race + "%");
     }
-    else if(status === "o"){
-        $("#turnTips").addClass("oStatus");
+    else{
+        $("turnTips .scorebar").addClass("none");
     }
+    // $("#turnTips").removeClass("xStatus oStatus");
+    // if(status === "x"){
+    //     $("#turnTips").addClass("xStatus");
+    // }
+    // else if(status === "o"){
+    //     $("#turnTips").addClass("oStatus");
+    // }
 }
 
 
