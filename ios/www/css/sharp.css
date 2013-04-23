@@ -367,9 +367,10 @@
 	line-height: 0px;
 	-webkit-transform-style: preserve-3d;
 	-webkit-perspective: 99999999px;
-	vertical-align: middle;
-	display: inline-block;
-	text-align: center;
+	position: absolute;
+	top: 50%;
+	left: -webkit-calc(50% - 240px);
+	margin-top: -234px;
 }
 .option .mainBtn{
 	-webkit-transition: -webkit-transform 500ms;
@@ -458,6 +459,7 @@
 	background: #FA8181;
 	position: absolute;
 	top:0px;
+	width:100%;
 }
 .bigTips.show{
 	-webkit-transform: translateX(0px);

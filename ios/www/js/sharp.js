@@ -96,11 +96,11 @@ function initBattleShow(callback){
 
 
 function calcWinRace(){
-    if(options.roles.p2 + options.roles.p1 == 0){
-        return null;
+    if(options.roles.p2.win + options.roles.p1.win == 0){
+        return 50;
     }
     else{
-        return Math.round(options.roles.p1/options.roles.p2 + options.roles.p1);
+        return Math.round((options.roles.p1.win/options.roles.p2.win + options.roles.p1.win)*100);
     }
                 
 
@@ -113,10 +113,10 @@ function setBarTips(text){
 function setBarStatus(status){
     var race = calcWinRace();
     if(race != null){
-        $("turnTips .scorebar").removeClass("none").css("width", race + "%");
+        $("#turnTips .scorebar").css("width", race + "%").removeClass("none");
     }
     else{
-        $("turnTips .scorebar").addClass("none");
+        $("#turnTips .scorebar").addClass("none");
     }
     // $("#turnTips").removeClass("xStatus oStatus");
     // if(status === "x"){
@@ -380,6 +380,7 @@ function start(){
     }else if(sta.turn.type == 'net-friend'){
         console.log('wait your net net-friend');
     }
+    setBarStatus();
 }
 
 
@@ -640,6 +641,7 @@ function next(callback){
         setTimeout(function(){
             sta.round++;
             start();
+
         },2000);
 
         render("win :)");
