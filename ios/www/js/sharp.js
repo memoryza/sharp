@@ -58,7 +58,6 @@ var sta;
 function init(){
     resetSta();
     bindEvents();
-    // startTiming();
 }
 
 function initBattleHidden(callback){
@@ -85,7 +84,6 @@ function initBattleShow(callback){
             chess.setW(function(){
                 chess.setXNormal();
                 if(i >= chesses.length -1){
-                    // ready = true;
                     callback && callback();
                 }
             }); 
@@ -101,12 +99,6 @@ function calcWinRace(){
     else{
         return Math.round((options.roles.p1.win/(options.roles.p2.win + options.roles.p1.win))*100);
     }
-                
-
-}
-
-function setBarTips(text){
-    $("#turnTips .tips").html(text);
 }
 
 function setBarStatus(status){
@@ -142,7 +134,7 @@ function bindEvents(){
                     SOCKET.on('next',function(data){
                         console.log(data);
                         putChess(data.type,data.coord);
-                        render("now");
+                        render();
                     });
                     start();
                 }
@@ -154,7 +146,6 @@ function bindEvents(){
         initBattleShow(function(){
             //turn on the play switch
             touchSwitch = true;
-
             start();
         });
         
@@ -254,36 +245,16 @@ function bindEvents(){
     iTouch({
         element   : Board,
         click     : function(e,x,y){
-            if(!touchSwitch) return;
-                        // 没有准备好的时候禁止点击
-                        // if(!ready){return false;}
             if(sta.turn.type !== 'people'){return false;}
-
             // 当棋局完成后禁止点击
             if(!!sta.roundOver){return;}
-
-            var array = sta.array;
-            var _target = e.target;
-            var w,h;
-            w = Board.clientWidth;
-            h = Board.clientHeight;
-
-            var _v1 = ~~(y/h*3);
-            var _v2 = ~~(x/w*3);
-
-            if(!array[_v1]){return false;}
-            if(array[_v1][_v2] !== null){
-                chesses[_v1*3 + _v2].shake(); 
-                return false;
+            
+            if(!touchSwitch){
+                console.log('sorry :( u have to wait!');
+            }else{
+                clickBoard(e,x,y);
             }
-
-            if(!!SOCKET){
-                SOCKET.emit('next', { type: sta.turn.value , coord : {x:_v1,y:_v2} });
-            }
-            touchSwitch = false;
-            putChess(sta.turn.value,{x:_v1,y:_v2});
         }
-
     });
 }
 
@@ -306,8 +277,30 @@ function resetSta(){
 
 function checkTipsStatusByTurn(){
     setBarStatus(sta.turn.value);
-    console.log("set once")
 }
+
+// 点击面板
+function clickBoard(e,x,y){
+
+    var array = sta.array;
+    var _target = e.target;
+    var w,h;
+    w = Board.clientWidth;
+    h = Board.clientHeight;
+
+    var _v1 = ~~(y/h*3);
+    var _v2 = ~~(x/w*3);
+
+    if(!array[_v1]){return false;}
+    if(array[_v1][_v2] !== null){chesses[_v1*3 + _v2].shake(); return false;}
+
+    if(!!SOCKET){
+        SOCKET.emit('next', { type: sta.turn.value , coord : {x:_v1,y:_v2} });
+    }
+    touchSwitch = false;
+    putChess(sta.turn.value,{x:_v1,y:_v2});
+}
+
 
 //开局
 function start(){
@@ -320,13 +313,14 @@ function start(){
     sta.timer = 0;
     sta.times++;
 
+    setBoardClass(sta.turn.value);
+
     if(sta.turn.type == 'people'){
         console.log('wait for start!');
-
-        render("first");
+        render();
     }else if(sta.turn.type == 'computer'){
         comTurn();
-        render("now");
+        render();
     }else if(sta.turn.type == 'net-friend'){
         console.log('wait your net net-friend');
     }
@@ -399,7 +393,6 @@ function initLoader(callback){
 }
 
 //<<------option shense
-
 
 "Sound Split Multi Single".split(" ").forEach(function(name){
     window["hide" + name] = function(){
@@ -561,53 +554,67 @@ function findPuts(value){
     return wight_array;
 }
 
-function render(text){
+function render(winnerType){
     checkTipsStatusByTurn();
     var callback = function(){
         touchSwitch = true;
-        console.log(touchSwitch)
     }
-    
 
-    setBarTips(text);
-    for(var i=0;i<sta.array.length;i++){
-        for(var j=0;j<sta.array[i].length;j++){
-            var _chess = chesses[i*3 + j],
-                n = i*3 + j;
-            if(sta.array[i][j] !== null ){
-                if(sta.array[i][j] == 'o'){
-                    _chess.setO( n >= 8 ? callback : null);
-            	}else{
-                    _chess.setX( n >= 8 ? callback : null);
-            	}
-            }else{
-                _chess.setW( n >= 8 ? callback : null);
+
+    if(!!winnerType && winnerType == 'o'){
+        for(var i=0;i<sta.array.length;i++){
+            for(var j=0;j<sta.array[i].length;j++){
+                var _chess = chesses[i*3 + j];
+                _chess.setO();
+            }
+        }
+    }else if(!!winnerType && winnerType == 'x'){
+        for(var i=0;i<sta.array.length;i++){
+            for(var j=0;j<sta.array[i].length;j++){
+                var _chess = chesses[i*3 + j];
+                _chess.setX();
+            }
+        }
+    }else{
+        for(var i=0;i<sta.array.length;i++){
+            for(var j=0;j<sta.array[i].length;j++){
+                var _chess = chesses[i*3 + j],
+                    n = i*3 + j;
+                if(sta.array[i][j] !== null ){
+                    if(sta.array[i][j] == 'o'){
+                        _chess.setO( n >= 8 ? callback : null);
+                    }else{
+                        _chess.setX( n >= 8 ? callback : null);
+                    }
+                }else{
+                    _chess.setW( n >= 8 ? callback : null);
+                }
             }
         }
     }
-
 }
 
 function next(callback){
     if(!!sta.roundOver){return;}
     sta.step++;
-    var finish = judgeWin();
-    if(!!finish){
+    var winnerType = judgeWin();
+    if(!!winnerType){
         // game over and start again!
-
         setTimeout(function(){
             sta.round++;
             start();
-        },2000);
+        },1000);
 
         sta.roundOver = true;
-        render("win :)");
+        render(winnerType);
     }
     else{
         if(sta.step >= 6){
             var _coord = sta.history[sta.step -6];
             var _chess = chesses[_coord.x*3 + _coord.y];
+            var _start = Date.now();
             _chess.rock();
+            console.log(Date.now() - _start);
         }
 
         //当步骤为8的时候 移除一个。
@@ -618,13 +625,15 @@ function next(callback){
 
         sta.turn = sta.turn == options.roles.p1 ?  options.roles.p2 :  options.roles.p1;
 
+        setBoardClass(sta.turn.value);
+
         if(sta.turn.type == 'computer'){
             setTimeout(function(){
                  comTurn();
             },500);
         }       
 
-        render("now"); 
+        render(); 
     }
 }
 
@@ -675,13 +684,19 @@ function judgeWin(){
             options.roles.p1.lose++;
         }
     }
-    return finished;
+    return winnerType;
 }
 
 soundManager.onready(function() {
     initChess();
     initBattleHidden();
 });
+
+function setBoardClass(c){
+    Board.classList.remove('x');
+    Board.classList.remove('o');
+    Board.classList.add(c);
+}
 
 // document.addEventListener('deviceready', init, false);
 
