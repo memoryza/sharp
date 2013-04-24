@@ -273,6 +273,8 @@ function resetSta(){
         times : 0
     };
 
+    Board.classList.remove('x');
+    Board.classList.add('o');
 }
 
 function checkTipsStatusByTurn(){
