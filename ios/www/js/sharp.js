@@ -248,12 +248,12 @@ function bindEvents(){
             if(sta.turn.type !== 'people'){return false;}
             // 当棋局完成后禁止点击
             if(!!sta.roundOver){return;}
-            
-            if(!touchSwitch){
-                console.log('sorry :( u have to wait!');
-            }else{
+
+            // if(!touchSwitch){
+            //     console.log('sorry :( u have to wait!');
+            // }else{
                 clickBoard(e,x,y);
-            }
+            // }
         }
     });
 }
@@ -557,7 +557,7 @@ function findPuts(value){
 function render(winnerType){
     checkTipsStatusByTurn();
     var callback = function(){
-        touchSwitch = true;
+        //touchSwitch = true;
     }
 
 
