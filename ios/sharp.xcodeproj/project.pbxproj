@@ -28,6 +28,10 @@
 		3072F99713A8081B00425683 /* Capture.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 3072F99613A8081B00425683 /* Capture.bundle */; };
 		30E5649213A7FCAF007403D8 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 30E5649113A7FCAF007403D8 /* CoreMedia.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		5B1594DD16A7569C00FEF299 /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B1594DC16A7569C00FEF299 /* AssetsLibrary.framework */; };
+		6D05F8D31728086100A48813 /* logo_114x114.png in Resources */ = {isa = PBXBuildFile; fileRef = 6D05F8D21728086100A48813 /* logo_114x114.png */; };
+		6D05F8D517280B5800A48813 /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 6D05F8D417280B5800A48813 /* Default@2x.png */; };
+		6D05F8D917280E0500A48813 /* logo_57x57.png in Resources */ = {isa = PBXBuildFile; fileRef = 6D05F8D817280E0500A48813 /* logo_57x57.png */; };
+		6D05F8DA17280E1600A48813 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 6D05F8D617280B5B00A48813 /* Default.png */; };
 		835E0F781705B10B00BF2F78 /* EmailComposer.m in Sources */ = {isa = PBXBuildFile; fileRef = 835E0F761705B10B00BF2F78 /* EmailComposer.m */; };
 		835E0F7A1705D57A00BF2F78 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 835E0F791705D57A00BF2F78 /* MessageUI.framework */; };
 		83AD5B0816FC3D3C001A871C /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 83AD5B0716FC3D3C001A871C /* Default-568h@2x.png */; };
@@ -55,7 +59,7 @@
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1D3623240D0F684500981E51 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		1D3623250D0F684500981E51 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		1D6058910D05DD3D006BFB54 /* sharp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = sharp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1D6058910D05DD3D006BFB54 /* ###.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "###.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		288765FC0DF74451002DB57D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -78,6 +82,10 @@
 		30E5649113A7FCAF007403D8 /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
 		32CA4F630368D1EE00C91783 /* sharp-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "sharp-Prefix.pch"; sourceTree = "<group>"; };
 		5B1594DC16A7569C00FEF299 /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
+		6D05F8D21728086100A48813 /* logo_114x114.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = logo_114x114.png; sourceTree = "<group>"; };
+		6D05F8D417280B5800A48813 /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
+		6D05F8D617280B5B00A48813 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
+		6D05F8D817280E0500A48813 /* logo_57x57.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = logo_57x57.png; sourceTree = "<group>"; };
 		835E0F741705B10B00BF2F78 /* EmailComposer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EmailComposer.h; sourceTree = "<group>"; };
 		835E0F761705B10B00BF2F78 /* EmailComposer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EmailComposer.m; sourceTree = "<group>"; };
 		835E0F791705D57A00BF2F78 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
@@ -130,7 +138,7 @@
 		19C28FACFE9D520D11CA2CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				1D6058910D05DD3D006BFB54 /* sharp.app */,
+				1D6058910D05DD3D006BFB54 /* ###.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -138,6 +146,10 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
+				6D05F8D817280E0500A48813 /* logo_57x57.png */,
+				6D05F8D617280B5B00A48813 /* Default.png */,
+				6D05F8D417280B5800A48813 /* Default@2x.png */,
+				6D05F8D21728086100A48813 /* logo_114x114.png */,
 				835E0F791705D57A00BF2F78 /* MessageUI.framework */,
 				83AD5B0716FC3D3C001A871C /* Default-568h@2x.png */,
 				F840E1F0165FE0F500CFE078 /* config.xml */,
@@ -248,7 +260,7 @@
 			);
 			name = sharp;
 			productName = sharp;
-			productReference = 1D6058910D05DD3D006BFB54 /* sharp.app */;
+			productReference = 1D6058910D05DD3D006BFB54 /* ###.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -307,6 +319,10 @@
 				3072F99713A8081B00425683 /* Capture.bundle in Resources */,
 				302D95F214D2391D003F00A1 /* MainViewController.xib in Resources */,
 				83AD5B0816FC3D3C001A871C /* Default-568h@2x.png in Resources */,
+				6D05F8D31728086100A48813 /* logo_114x114.png in Resources */,
+				6D05F8D517280B5800A48813 /* Default@2x.png in Resources */,
+				6D05F8D917280E0500A48813 /* logo_57x57.png in Resources */,
+				6D05F8DA17280E1600A48813 /* Default.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -365,9 +381,9 @@
 				GCC_THUMB_SUPPORT = NO;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = "sharp/sharp-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
-				PRODUCT_NAME = sharp;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				PRODUCT_NAME = "###";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -382,9 +398,9 @@
 				GCC_THUMB_SUPPORT = NO;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = "sharp/sharp-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
-				PRODUCT_NAME = sharp;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				PRODUCT_NAME = "###";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};

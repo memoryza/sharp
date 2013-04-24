@@ -8,21 +8,17 @@
 	<string>${PRODUCT_NAME}</string>
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
-	<key>CFBundleIconFile</key>
-	<string>icon.png</string>
 	<key>CFBundleIcons</key>
 	<dict>
 		<key>CFBundlePrimaryIcon</key>
 		<dict>
 			<key>CFBundleIconFiles</key>
 			<array>
-				<string>icon.png</string>
-				<string>icon@2x.png</string>
-				<string>icon-72.png</string>
-				<string>icon-72@2x.png</string>
+				<string>logo_114x114.png</string>
+				<string>logo_57x57.png</string>
 			</array>
 			<key>UIPrerenderedIcon</key>
-			<false/>
+			<true/>
 		</dict>
 	</dict>
 	<key>CFBundleIdentifier</key>
@@ -43,6 +39,8 @@
 	<string></string>
 	<key>NSMainNibFile~ipad</key>
 	<string></string>
+	<key>UIPrerenderedIcon</key>
+	<true/>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
