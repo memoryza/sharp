@@ -272,7 +272,10 @@ function bindEvents(){
             var _v2 = ~~(x/w*3);
 
             if(!array[_v1]){return false;}
-            if(array[_v1][_v2] !== null){chesses[_v1*3 + _v2].shake(); return false;}
+            if(array[_v1][_v2] !== null){
+                chesses[_v1*3 + _v2].shake(); 
+                return false;
+            }
 
             if(!!SOCKET){
                 SOCKET.emit('next', { type: sta.turn.value , coord : {x:_v1,y:_v2} });
