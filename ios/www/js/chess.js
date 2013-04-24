@@ -168,6 +168,7 @@ var Chess = Chess || {};
             this._setStaticClass();
         },
         rock:function(){
+            return;
             $(this.rotateElem).addClass("infinite");
             if(this.status === "x"){
                 $(this.elem).addClass("rockX");
