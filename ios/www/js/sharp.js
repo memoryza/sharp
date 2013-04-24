@@ -157,24 +157,24 @@ function bindEvents(){
         click     : function(e,x,y){
             if(!touchSwitch) return;
 
-                        doc.getElementById('board').style.display = '';
-                        initBattleHidden();
+            doc.getElementById('board').style.display = '';
+            initBattleHidden();
 
-                        singleBtn.setO(function(){
-                            setTimeout(function(){
-                                _startWithType('computer');
-                            }, 100)
-                            
-                        })
+            singleBtn.setO(function(){
+                setTimeout(function(){
+                    _startWithType('computer');
+                }, 100)
+                
+            })
 
-                        setTimeout(function(){
-                            hideSplit();
-                        }, 100);
-                        setTimeout(function(){
-                            hideMulti();
-                        }, 200);
+            setTimeout(function(){
+                hideSplit();
+            }, 100);
+            setTimeout(function(){
+                hideMulti();
+            }, 200);
 
-                        doc.querySelector('#single .btnTips').classList.add('dismiss');
+            doc.querySelector('#single .btnTips').classList.add('dismiss');
 
             touchSwitch = false;
         }
@@ -185,23 +185,23 @@ function bindEvents(){
         element   : doc.getElementById('multi'),
         click     : function(e,x,y){
             if(!touchSwitch) return;
-                        doc.getElementById('board').style.display = '';
-                        initBattleHidden();
+            doc.getElementById('board').style.display = '';
+            initBattleHidden();
 
-                        multiBtn.setO(function(){
-                            setTimeout(function(){
-                                _startWithType('people');
-                            }, 100)
-                        });
+            multiBtn.setO(function(){
+                setTimeout(function(){
+                    _startWithType('people');
+                }, 100)
+            });
 
-                        setTimeout(function(){
-                            hideSplit();
-                        }, 100);
-                        setTimeout(function(){
-                            hideSingle();
-                        }, 200);
+            setTimeout(function(){
+                hideSplit();
+            }, 100);
+            setTimeout(function(){
+                hideSingle();
+            }, 200);
 
-                        doc.querySelector('#multi .btnTips').classList.add('dismiss');
+            doc.querySelector('#multi .btnTips').classList.add('dismiss');
             touchSwitch = false;
         }
     });
@@ -249,11 +249,11 @@ function bindEvents(){
             // 当棋局完成后禁止点击
             if(!!sta.roundOver){return;}
 
-            // if(!touchSwitch){
-            //     console.log('sorry :( u have to wait!');
-            // }else{
+            if(!touchSwitch){
+                 console.log('sorry :( u have to wait!');
+             }else{
                 clickBoard(e,x,y);
-            // }
+            }
         }
     });
 }
@@ -299,7 +299,6 @@ function clickBoard(e,x,y){
     if(!!SOCKET){
         SOCKET.emit('next', { type: sta.turn.value , coord : {x:_v1,y:_v2} });
     }
-    touchSwitch = false;
     putChess(sta.turn.value,{x:_v1,y:_v2});
 }
 
@@ -614,9 +613,7 @@ function next(callback){
         if(sta.step >= 6){
             var _coord = sta.history[sta.step -6];
             var _chess = chesses[_coord.x*3 + _coord.y];
-            var _start = Date.now();
             _chess.rock();
-            console.log(Date.now() - _start);
         }
 
         //当步骤为8的时候 移除一个。

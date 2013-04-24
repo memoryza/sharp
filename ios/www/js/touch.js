@@ -83,7 +83,7 @@
             }
 
             //click 点击误差范围
-            this.errorRange = 10;
+            this.errorRange = 30;
 
             //停留时间 如果超过该值则不用触发click事件
             this.holdon = 1000; //单位为毫秒
