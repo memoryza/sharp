@@ -185,8 +185,6 @@
 
 
 
-
-
 /** <--------- cube chess class **/
 .chess{
 	display: inline-block;
@@ -287,7 +285,6 @@
 }
 
 
-
 .chess .face{
 	top: 0px;
 	left: 0px;
@@ -318,17 +315,26 @@
 	background-image: none;
 	background-color:  #fff;
 }
+
 .chess .faceW{
-	background-image: url(../img/sprite.png);
-	background-position:  0px -214px;
+	background-image: url(../img/w_bg.png);
 	background-color:  #f6f6f6;
+	background-repeat: no-repeat;
+	-webkit-transition:background 0.5s;
+}
+
+.board.o .chess .faceW{
+	background-position: 0 0;
+}
+
+.board.x .chess .faceW{
+	background-position: -214px 0;
 }
 
 .chess .faceW.blank{
 	background-image: none;
 	background-color:  #fff;
 }
-
 
 .shadow{
 	opacity: 0;
@@ -348,7 +354,6 @@
 	-o-animation-name: flash;
 	animation-name: flash;
 }
-
 
 /*options board*/
 
@@ -415,6 +420,7 @@
 	background-color: #333;
 }
 .option .chess.single .faceW{
+	background-image: url(../img/sprite.png);
 	background-position:-214px -214px;
 }
 .option .chess.single .faceO{
@@ -424,6 +430,7 @@
 	background:#fff;
 }
 .option .chess.multi .faceW{
+	background-image: url(../img/sprite.png);
 	background-position:0px -428px;
 }
 .option .chess.multi .faceO{
@@ -432,7 +439,8 @@
 .option .chess.multi .faceX{
 	background:#fff;
 }
-.option .chess.sound .faceW{
+/*.option .chess.sound .faceW{
+	background-image: url(../img/sprite.png);
 	background-position:-214px -428px;
 }
 .option .chess.sound .faceO{
@@ -441,7 +449,7 @@
 .option .chess.sound .faceX{
 	background-position:0px -642px;
 }
-
+*/
 
 
 
