@@ -189,6 +189,7 @@
 .chess{
 	display: inline-block;
 	position: absolute;
+	left: 0;
 	margin: 0px;
 	width: 214px;
 	height: 214px;

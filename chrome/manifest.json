@@ -1,0 +1,24 @@
+{
+  "name": "useCubes",
+  "description": "Use cubes create your incredible models!",
+  "version": "0.5.206",
+  "minimum_chrome_version" : "23",
+  "manifest_version": 2,
+  "app": {
+    "background": {
+      "scripts": ["background.js"]
+    }
+  },
+  "permissions" : [
+  	"storage",
+    "notifications",
+    "unlimitedStorage",
+    "contextMenus"
+  ],
+  "requirements": {
+  	"3D": {
+	  "features": ["webgl"]
+	   }
+  },
+  "icons": { "16": "logo-16.png", "128": "logo-128.png" }
+}
